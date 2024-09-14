@@ -102,7 +102,7 @@
 
 ### DB 設計
 
-```mermaid　
+```mermaid
 erDiagram
   channels ||--o{ posts : "1つのチャンネルは複数の投稿に関連づけられる 1対多"
   categories ||--o{ post_categories_relations: "1つのカテゴリは複数の投稿に関連付けられる 1対多"
