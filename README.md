@@ -1,8 +1,8 @@
 ````mermaid　
 erDiagram
-  users ||--o{ episodes : "1人のユーザーは0以上の投稿を持つ"
+  users ||--o{ episodes : "1人のユーザーは0以上のエピソードを持つ"
   users ||--o{ comments: "1人のユーザーは0以上のコメントを持つ"
-  episodes ||--o{ comments: "1つの投稿は0以上のコメントを持つ"
+  episodes ||--o{ comments: "1つのエピソードは0以上のコメントを持つ"
 
   users {
     bigint id PK
@@ -14,8 +14,8 @@ erDiagram
   episodes {
     bigint id PK
     references user FK
-    string title "投稿タイトル"
-    text content "投稿内容"
+    string title "エピソードタイトル"
+    text content "エピソード内容"
     timestamp created_at
     timestamp deleted_at
   }
