@@ -104,13 +104,13 @@
 
 ```mermaid
 erDiagram
-  channels ||--o{ posts : "1つのチャンネルは複数の投稿に関連づけられる 1対多"
+  channels ||--o{ episodes : "1つのチャンネルは複数の投稿に関連づけられる 1対多"
   categories ||--o{ post_categories_relations: "1つのカテゴリは複数の投稿に関連付けられる 1対多"
-  posts ||--o{ post_categories_relations: "1つの投稿は複数のカテゴリに関連付けられる 1対多"
+  episodes ||--o{ post_categories_relations: "1つの投稿は複数のカテゴリに関連付けられる 1対多"
   categories ||--o{ channel_categories_relations: "1つのカテゴリは複数のチャンネルに関連付けられる 1対多"
   channels ||--o{ channel_categories_relations: "1つのチャンネルは複数のカテゴリに関連付けられる 1対多"
-  posts ||--o| audios: "1つの投稿は1つの音声データを持つ 1対1"
-  posts ||--o| users: "1つの投稿は1人のユーザーと関連付けられる 1対1"
+  episodes ||--o| audios: "1つの投稿は1つの音声データを持つ 1対1"
+  episodes ||--o| users: "1つの投稿は1人のユーザーと関連付けられる 1対1"
 
 
 
@@ -132,7 +132,7 @@ erDiagram
     timestamp updated_at
   }
 
-  posts {
+  episodes {
     bigint id PK
     string title "投稿のタイトル"
     text content "投稿内容"
