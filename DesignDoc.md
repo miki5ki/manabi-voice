@@ -105,10 +105,10 @@
 ```mermaid
 erDiagram
   channels ||--o{ episodes : "1つのチャンネルは複数のエピソードに関連づけられる 1対多"
-  categories ||--o{ post_categories_relations: "1つのカテゴリは複数のエピソードに関連付けられる 1対多"
-  episodes ||--o{ post_categories_relations: "1つのエピソードは複数のカテゴリに関連付けられる 1対多"
-  categories ||--o{ channel_categories_relations: "1つのカテゴリは複数のチャンネルに関連付けられる 1対多"
-  channels ||--o{ channel_categories_relations: "1つのチャンネルは複数のカテゴリに関連付けられる 1対多"
+  categories ||--o{ episodes_categories_relations: "1つのカテゴリは複数のエピソードに関連付けられる 1対多"
+  episodes ||--o{ episodes_categories_relations: "1つのエピソードは複数のカテゴリに関連付けられる 1対多"
+  categories ||--o{ channels_categories_relations: "1つのカテゴリは複数のチャンネルに関連付けられる 1対多"
+  channels ||--o{ channels_categories_relations: "1つのチャンネルは複数のカテゴリに関連付けられる 1対多"
   episodes ||--o| audios: "1つのエピソードは1つの音声データを持つ 1対1"
   episodes ||--o| users: "1つのエピソードは1人のユーザーと関連付けられる 1対1"
 
@@ -142,15 +142,15 @@ erDiagram
     timestamp updated_at
   }
 
-  post_categories_relations {
+  episodes_categories_relations {
     bigint id PK
-    bigint post_id FK
+    bigint episode_id FK
     bigint category_id FK
     timestamp created_at
     timestamp updated_at
   }
 
-  channel_categories_relations {
+  channels_categories_relations {
     bigint id PK
     bigint channel_id FK
     bigint category_id FK
