@@ -119,6 +119,7 @@ erDiagram
     string name "ユーザー名"
     string email "メールアドレス"
     enum is_active "サービスの退会をしているかどうか"
+    enum role "管理者/配信者/視聴者のどれか"
     timestamp created_at
     timestamp updated_at
   }
