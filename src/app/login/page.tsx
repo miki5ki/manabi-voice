@@ -1,5 +1,5 @@
 const page = () => {
-  return <div>トップページです</div>;
+  return <div>ログインページ</div>;
 };
 
 export default page;
