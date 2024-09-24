@@ -1,6 +1,7 @@
 {
   "editor.formatOnSave": true,
   "editor.defaultFormatter": "esbenp.prettier-vscode",
+  "editor.codeActionsOnSave": ["source.addMissingImports", "source.fixAll.eslint"],
   "files.autoSave": "onFocusChange",
   "prettier.tabWidth": 2,
   "prettier.printWidth": 120,
