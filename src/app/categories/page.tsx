@@ -1,5 +1,5 @@
-const page = () => {
+const CategoriesPage = () => {
   return <div>カテゴリの一覧ページです</div>;
 };
 
-export default page;
+export default CategoriesPage;

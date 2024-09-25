@@ -1,5 +1,5 @@
-const page = () => {
-  return <div>放送回の詳細ページです</div>;
+const EpisodeShowPage = () => {
+  return <div>エピソードの詳細ページです</div>;
 };
 
-export default page;
+export default EpisodeShowPage;

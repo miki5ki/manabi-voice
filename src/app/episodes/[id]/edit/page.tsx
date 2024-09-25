@@ -1,5 +1,5 @@
-function page() {
-  return <div>放送回の編集ページです</div>;
+function EpisodeEditPage() {
+  return <div>エピソードの編集ページです</div>;
 }
 
-export default page;
+export default EpisodeEditPage;

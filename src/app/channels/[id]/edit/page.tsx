@@ -1,5 +1,5 @@
-const page = () => {
+const ChannelEditPage = () => {
   return <div>チャンネルの編集ページです</div>;
 };
 
-export default page;
+export default ChannelEditPage;
