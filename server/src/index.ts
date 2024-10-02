@@ -62,8 +62,6 @@ app.put("/editChannel/:id", async (req: Request, res: Response): Promise<void> =
 });
 
 app.delete("/deleteChannel/:id", async (req: Request, res: Response) => {
-  console.log("リクエストスタート");
-
   const id = Number(req.params.id);
   try {
     const deleteChannel = await prisma.channel.delete({
