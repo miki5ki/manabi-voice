@@ -13,9 +13,9 @@ app.get("/channels", async (req: Request, res: Response): Promise<void> => {
   } catch (error) {
     res.status(500).json({
       error: error instanceof Error ? error.message : "Unknown error",
-      message: "Failed to create channel",
+      message: "Failed to get channel",
     });
-    console.error("Error creating channel:", error);
+    console.error("Error get channel:", error);
   }
 });
 
@@ -35,18 +35,13 @@ app.post("/createChannel", async (req: Request, res: Response): Promise<void> =>
       error: error instanceof Error ? error.message : "Unknown error",
       message: "Failed to create channel",
     });
-    console.error("Error creating channel:", error);
+    console.error("Error create channel:", error);
   }
 });
 
 app.put("/editChannel/:id", async (req: Request, res: Response): Promise<void> => {
-  console.log("Request received at /editChannel/:id");
-
   const id = Number(req.params.id);
-  console.log("Received ID:", id);
-
   const { title, description } = req.body;
-  console.log("Request Body:", req.body);
 
   try {
     const editChannel = await prisma.channel.update({
@@ -56,16 +51,13 @@ app.put("/editChannel/:id", async (req: Request, res: Response): Promise<void> =
       },
       where: { id },
     });
-
     res.json(editChannel);
   } catch (error) {
-    console.error("Error updating channel:", error);
     res.status(500).json({
-      // デバッグ用にエラーオブジェクトを出力
-      debugInfo: error,
       error: error instanceof Error ? error.message : "Unknown error",
       message: "Failed to edit channel",
     });
+    console.error("Error edit channel:", error);
   }
 });
 
@@ -81,7 +73,7 @@ app.delete("/deleteChannel/:id", async (req: Request, res: Response) => {
   } catch (error) {
     res.status(500).json({
       error: error instanceof Error ? error.message : "Unknown error",
-      message: "Failed to create channel",
+      message: "Failed to delete channel",
     });
     console.error("Error delete channel:", error);
   }
