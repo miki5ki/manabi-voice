@@ -35,3 +35,13 @@ export async function createChannel(formData: FormData) {
     console.error("Validation failed:", validatedFields.error);
   }
 }
+
+export async function getChannels() {
+  try {
+    const res = await prisma.channel.findMany();
+
+    return res;
+  } catch (e) {
+    console.error("Database Error", e);
+  }
+}
