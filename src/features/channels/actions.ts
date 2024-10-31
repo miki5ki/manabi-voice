@@ -27,10 +27,9 @@ export async function createChannel(formData: FormData) {
   }
 
   try {
-    const res = await prisma.channel.create({
+    await prisma.channel.create({
       data: validatedFields.data,
     });
-    return res;
   } catch (e) {
     console.log("Database Error:", e);
   }
