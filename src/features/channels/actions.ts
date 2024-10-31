@@ -64,9 +64,9 @@ export async function getChannel(channelId: string): Promise<Channel | null> {
 
 export async function updateChannel(formData: FormData) {
   const validatedFields = ChannelSchema.safeParse({
+    id: formData.get("channelId"),
     title: formData.get("channelTitle"),
     description: formData.get("channelDescription"),
-    it: formData.get("channelId"),
   });
 
   if (!validatedFields.success) {
@@ -74,15 +74,16 @@ export async function updateChannel(formData: FormData) {
     return null;
   }
   try {
-    const res = await prisma.channel.update({
+    await prisma.channel.update({
       data: { title: validatedFields.data.title, description: validatedFields.data.description },
       where: { id: validatedFields.data.id },
     });
-    return res;
   } catch (e) {
     console.error("Database Error:", e);
     return null;
   }
+  revalidatePath("/channels");
+  redirect("/channels");
 }
 
 export async function deleteChannel(channelId: string) {
