@@ -1,3 +1,5 @@
+import Link from "next/link";
+
 import { getChannels } from "@/features/channels/actions";
 
 const ChannelsPage = async () => {
@@ -20,7 +22,9 @@ const ChannelsPage = async () => {
               <tr key={channel.id}>
                 <td>{channel.title}</td>
                 <td>{channel.description}</td>
-                <td>編集</td>
+                <td>
+                  <Link href={`/channels/${channel.id}/edit`}>編集</Link>
+                </td>
                 <td>削除</td>
               </tr>
             </>

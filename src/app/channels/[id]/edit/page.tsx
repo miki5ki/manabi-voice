@@ -1,5 +1,30 @@
-const ChannelEditPage = () => {
-  return <div>チャンネルの編集ページです</div>;
+import { getChannel, updateChannel } from "@/features/channels/actions";
+
+type Props = {
+  params: {
+    id: string;
+  };
+  searchParams: object;
+};
+const ChannelEditPage = async (props: Props) => {
+  const { params } = props;
+  const { id } = params;
+  const channel = await getChannel(id);
+
+  if (!channel) {
+    return;
+  }
+
+  return (
+    <>
+      <form action={updateChannel}>
+        <input type="hidden" name="channelId" value={channel.id} />
+        <input type="text" name="channelTitle" defaultValue={channel.title} />
+        <input type="text" name="channelDescription" defaultValue={channel.description ?? ""} />
+        <button>保存</button>
+      </form>
+    </>
+  );
 };
 
 export default ChannelEditPage;
