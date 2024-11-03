@@ -7,6 +7,7 @@ const ChannelsPage = async () => {
 
   return (
     <>
+      <Link href="/channels/create">新規作成</Link>
       <table>
         <thead>
           <tr>
