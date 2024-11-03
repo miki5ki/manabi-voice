@@ -25,7 +25,6 @@ const ChannelsPage = async () => {
                 <td>
                   <Link href={`/channels/${channel.id}/edit`}>編集</Link>
                 </td>
-                <td>削除</td>
               </tr>
             </>
           ))}

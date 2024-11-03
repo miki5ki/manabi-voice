@@ -1,4 +1,4 @@
-import { getChannel, updateChannel } from "@/features/channels/actions";
+import { deleteChannel, getChannel, updateChannel } from "@/features/channels/actions";
 
 type Props = {
   params: {
@@ -17,11 +17,12 @@ const ChannelEditPage = async (props: Props) => {
 
   return (
     <>
-      <form action={updateChannel}>
+      <form>
         <input type="hidden" name="channelId" value={channel.id} />
         <input type="text" name="channelTitle" defaultValue={channel.title} />
         <input type="text" name="channelDescription" defaultValue={channel.description ?? ""} />
-        <button>保存</button>
+        <button formAction={updateChannel}>保存</button>
+        <button formAction={deleteChannel}>削除</button>
       </form>
     </>
   );

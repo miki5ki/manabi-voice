@@ -14,6 +14,7 @@ const ChannelSchema = z.object({
 });
 
 const CreateChannelSchema = ChannelSchema.omit({ id: true });
+const DeleteChannelSchema = ChannelSchema.omit({ title: true, description: true });
 
 export async function createChannel(formData: FormData) {
   const validatedFields = CreateChannelSchema.safeParse({
@@ -40,7 +41,7 @@ export async function createChannel(formData: FormData) {
 export async function getChannels() {
   try {
     const res = await prisma.channel.findMany();
-
+    console.log(res);
     return res;
   } catch (e) {
     console.error("Database Error", e);
@@ -86,16 +87,25 @@ export async function updateChannel(formData: FormData) {
   redirect("/channels");
 }
 
-export async function deleteChannel(channelId: string) {
+export async function deleteChannel(formData: FormData) {
+  const validatedFields = DeleteChannelSchema.safeParse({
+    id: formData.get("channelId"),
+  });
+  if (!validatedFields.success) {
+    console.error("Validation Error:", validatedFields.error);
+    return null;
+  }
+
   try {
-    const res = await prisma.channel.delete({
+    await prisma.channel.delete({
       where: {
-        id: channelId,
+        id: validatedFields.data.id,
       },
     });
-    return res;
   } catch (e) {
     console.error("Database Error:", e);
     return null;
   }
+  revalidatePath("/channels");
+  redirect("/channels");
 }
