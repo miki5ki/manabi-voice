@@ -17,7 +17,7 @@ const ChannelEditPage = async (props: Props) => {
 
   return (
     <>
-      <form>
+      <form method="POST">
         <input type="hidden" name="channelId" value={channel.id} />
         <input type="text" name="channelTitle" defaultValue={channel.title} />
         <input type="text" name="channelDescription" defaultValue={channel.description ?? ""} />
