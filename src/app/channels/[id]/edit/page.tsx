@@ -19,7 +19,7 @@ const ChannelEditPage = async (props: Props) => {
     <>
       <form method="POST">
         <input type="hidden" name="channelId" value={channel.id} />
-        <input type="text" name="channelTitle" defaultValue={channel.title} />
+        <input type="text" name="channelTitle" defaultValue={channel.title} required />
         <input type="text" name="channelDescription" defaultValue={channel.description ?? ""} />
         <button formAction={updateChannel}>保存</button>
         <button formAction={deleteChannel}>削除</button>

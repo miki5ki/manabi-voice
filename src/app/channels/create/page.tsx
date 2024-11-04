@@ -4,7 +4,7 @@ const ChannelCreatePage = () => {
   return (
     <>
       <form action={createChannel}>
-        <input type="text" name="channelTitle" placeholder="チャンネルタイトル" />
+        <input type="text" name="channelTitle" placeholder="チャンネルタイトル" required />
         <input type="text" name="channelDescription" placeholder="チャンネル詳細" />
         <button>作成</button>
       </form>
