@@ -12,7 +12,7 @@ const ChannelEditPage = async (props: Props) => {
   const channel = await getChannel(id);
 
   if (!channel) {
-    return;
+    return <p>チャンネルが見つかりませんでした</p>;
   }
 
   return (
