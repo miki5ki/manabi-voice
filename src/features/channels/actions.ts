@@ -24,7 +24,7 @@ export async function createChannel(formData: FormData) {
 
   if (!validatedFields.success) {
     console.error("Validation Error:", validatedFields.error);
-    return null;
+    throw new Error("Validation failed");
   }
 
   try {
@@ -38,17 +38,18 @@ export async function createChannel(formData: FormData) {
   redirect("/channels");
 }
 
-export async function getChannels() {
+export async function getChannels(): Promise<Channel[]> {
   try {
     const res = await prisma.channel.findMany();
     console.log(res);
-    return res;
+    return res ?? [];
   } catch (e) {
     console.error("Database Error", e);
+    return [];
   }
 }
 
-export async function getChannel(channelId: string): Promise<Channel | null> {
+export async function getChannel(channelId: string): Promise<Channel | object> {
   try {
     const res = await prisma.channel.findUnique({
       where: {
@@ -56,10 +57,10 @@ export async function getChannel(channelId: string): Promise<Channel | null> {
       },
     });
 
-    return res;
+    return res ?? {};
   } catch (e) {
     console.error("Database Error:", e);
-    return null;
+    return {};
   }
 }
 
@@ -72,7 +73,7 @@ export async function updateChannel(formData: FormData) {
 
   if (!validatedFields.success) {
     console.error("Validation Error:", validatedFields.error);
-    return null;
+    throw new Error("Validation failed");
   }
   try {
     await prisma.channel.update({
@@ -81,7 +82,7 @@ export async function updateChannel(formData: FormData) {
     });
   } catch (e) {
     console.error("Database Error:", e);
-    return null;
+    return {};
   }
   revalidatePath("/channels");
   redirect("/channels");
@@ -104,7 +105,7 @@ export async function deleteChannel(formData: FormData) {
     });
   } catch (e) {
     console.error("Database Error:", e);
-    return null;
+    return {};
   }
   revalidatePath("/channels");
   redirect("/channels");
