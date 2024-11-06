@@ -15,3 +15,8 @@ model Channel {
   title String  
   description  String?
 }
+
+model Category {
+  id    Int     @id @default(autoincrement())
+  title String  
+}
