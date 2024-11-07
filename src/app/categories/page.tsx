@@ -7,7 +7,7 @@ const CategoriesPage = async () => {
 
   return (
     <>
-      <Link href={"/categories/create"}></Link>
+      <Link href={"/categories/create"}>新規作成</Link>
       <table>
         <thead>
           <tr>
