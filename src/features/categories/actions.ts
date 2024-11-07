@@ -25,15 +25,15 @@ export async function createCategory(formData: FormData) {
   }
 
   try {
-    const res = await prisma.category.create({
+    await prisma.category.create({
       data: {
         title: validatedFields.data.title,
       },
     });
-    return res;
   } catch (e) {
     console.log("Database Error:", e);
   }
+
   revalidatePath("/categories");
   redirect("/categories");
 }
