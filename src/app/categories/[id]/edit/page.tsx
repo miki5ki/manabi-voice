@@ -1,7 +1,25 @@
-import React from "react";
+import { getCategory } from "@/features/categories/actions";
 
-const CategoryEditPage = () => {
-  return <div>カテゴリの編集ページです</div>;
+type Props = {
+  params: {
+    id: string;
+  };
+  searchParams: object;
+};
+
+const CategoryEditPage = (props: Props) => {
+  const { params } = props;
+  const { id } = params;
+
+  const category = getCategory(id);
+
+  return (
+    <>
+      <form>
+        <input defaultValue={category.title} />
+      </form>
+    </>
+  );
 };
 
 export default CategoryEditPage;
