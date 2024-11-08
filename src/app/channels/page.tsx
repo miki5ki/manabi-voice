@@ -18,7 +18,7 @@ const ChannelsPage = async () => {
           </tr>
         </thead>
         <tbody>
-          {channels?.map((channel) => (
+          {channels.map((channel) => (
             <>
               <tr key={channel.id}>
                 <td>{channel.title}</td>
