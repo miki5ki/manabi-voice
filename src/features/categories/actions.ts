@@ -57,7 +57,6 @@ export async function getCategory(categoryId: string): Promise<Category> {
 export async function getCategories(): Promise<Category[]> {
   try {
     const res = await prisma.category.findMany();
-    console.log(res);
     return res ?? [];
   } catch (e) {
     console.error("Database Error", e);
@@ -70,8 +69,6 @@ export async function updateCategory(formData: FormData) {
     id: formData.get("categoryId"),
     title: formData.get("categoryTitle"),
   });
-  console.log(formData.get("categoryId"));
-  console.log(validatedFields);
 
   if (!validatedFields.success) {
     throw new Error("Validation failed");
