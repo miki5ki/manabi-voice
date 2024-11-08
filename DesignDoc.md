@@ -66,8 +66,8 @@
 - ユーザーはリセットメールを受信し、メール内のリンクをクリックして新しいパスワードを設定できる。
 - 新しいパスワードは、セキュリティ要件（最低 8 文字、大文字・小文字・数字・記号を含む）に従う必要がある。
 
-
 #### 管理者ユーザーはカテゴリーを作成できる
+
 - チャンネルやエピソードを属性別に分類するための目印を付与できる機能を持ち、管理者のみが作成できる。
 
 #### ユーザー（配信者）はチャネル作成できる
@@ -142,7 +142,9 @@ erDiagram
     string title "エピソードのタイトル"
     text content "エピソード内容"
     references audios FK
+    string audioId
     references users FK
+    string userId
     timestamp created_at
     timestamp updated_at
   }
