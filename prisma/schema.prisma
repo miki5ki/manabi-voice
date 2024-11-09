@@ -32,9 +32,9 @@ model Episode {
   title String 
   content String
   user User @relation(fields: [userId], references: [id])
-  userId String @unique
+  userId String
   audioId String @unique
-  audio Audio? @relation(fields: [audioId], references: [id]) 
+  audio Audio @relation(fields: [audioId], references: [id]) 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt @default(now())
 }
