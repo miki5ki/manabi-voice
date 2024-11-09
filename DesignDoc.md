@@ -66,8 +66,8 @@
 - ユーザーはリセットメールを受信し、メール内のリンクをクリックして新しいパスワードを設定できる。
 - 新しいパスワードは、セキュリティ要件（最低 8 文字、大文字・小文字・数字・記号を含む）に従う必要がある。
 
-
 #### 管理者ユーザーはカテゴリーを作成できる
+
 - チャンネルやエピソードを属性別に分類するための目印を付与できる機能を持ち、管理者のみが作成できる。
 
 #### ユーザー（配信者）はチャネル作成できる
@@ -118,63 +118,63 @@ erDiagram
 
 
 
-  users {
+  Users {
     bigint id PK
     string name "ユーザー名"
     string email "メールアドレス"
     enum is_active "サービスの退会をしているかどうか"
     enum role "管理者/配信者/視聴者のどれか"
-    timestamp created_at
-    timestamp updated_at
+    timestamp createdAt
+    timestamp updatedAt
   }
 
-  channels {
+  Channels {
     bigint id PK
     string title "番組名"
     text description "番組の詳細説明"
     references users FK
-    timestamp created_at
-    timestamp updated_at
+    timestamp createdAt
+    timestamp updatedAt
   }
 
-  episodes {
+  Episodes {
     bigint id PK
     string title "エピソードのタイトル"
     text content "エピソード内容"
     references audios FK
     references users FK
-    timestamp created_at
-    timestamp updated_at
+    timestamp createdAt
+    timestamp updatedAt
   }
 
-  episodes_categories_relations {
+  EpisodesCategoriesRelations {
     bigint id PK
-    bigint episode_id FK
-    bigint category_id FK
-    timestamp created_at
-    timestamp updated_at
+    bigint episodeId FK
+    bigint categoryId FK
+    timestamp createdAt
+    timestamp updatedAt
   }
 
-  channels_categories_relations {
+  ChannelsCategoriesRelations {
     bigint id PK
-    bigint channel_id FK
-    bigint category_id FK
-    timestamp created_at
-    timestamp updated_at
+    bigint channelId FK
+    bigint categoryId FK
+    timestamp createdAt
+    timestamp updatedAt
   }
 
-  audios {
+  Audios {
     bigint id PK
     text file_path "ストレージ保管の音声ファイルの参照先"
-    timestamp created_at
-    timestamp updated_at
+    timestamp createdAt
+    timestamp updatedAt
   }
 
-  categories {
+  Categories {
     bigint id PK
     text name "カテゴリ名"
-    timestamp created_at
-    timestamp updated_at
+    timestamp createdAt
+    timestamp updatedAt
   }
 
 
