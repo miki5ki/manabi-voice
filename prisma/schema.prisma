@@ -12,6 +12,11 @@ datasource db {
 
 model Channel {
   id    String     @id @default(uuid())
-  title String  
+  title String  @unique
   description  String?
+}
+
+model Category {
+  id    String     @id @default(uuid())
+  title String  @unique
 }
