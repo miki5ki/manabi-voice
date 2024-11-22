@@ -51,5 +51,14 @@ model Audio {
 
 model Category {
   id    String     @id @default(uuid())
-  title String  @unique
+  title String  
+  description  String?
+}
+
+model ChannelsCategoriesRelations {
+  id String  @id @default(uuid())
+  channelId String @unique
+  categoryId String
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt @default(now())
 }
