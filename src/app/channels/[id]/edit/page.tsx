@@ -1,3 +1,4 @@
+import { getCategories } from "@/features/categories/actions";
 import { deleteChannel, getChannel, updateChannel } from "@/features/channels/actions";
 
 type Props = {
@@ -10,7 +11,7 @@ const ChannelEditPage = async (props: Props) => {
   const { params } = props;
   const { id } = params;
   const channel = await getChannel(id);
-
+  const categories = await getCategories();
   if (!channel) {
     return <p>チャンネルが見つかりませんでした</p>;
   }
@@ -21,6 +22,13 @@ const ChannelEditPage = async (props: Props) => {
         <input type="hidden" name="channelId" value={channel.id} />
         <input type="text" name="channelTitle" defaultValue={channel.title} required />
         <input type="text" name="channelDescription" defaultValue={channel.description ?? ""} />
+        <select name="categoryId">
+          {categories.map((category) => (
+            <option key={category.id} value={category.id}>
+              {category.title}
+            </option>
+          ))}
+        </select>
         <button formAction={updateChannel}>保存</button>
         <button formAction={deleteChannel}>削除</button>
       </form>
