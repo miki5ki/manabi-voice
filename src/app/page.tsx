@@ -1,5 +1,3 @@
-import UserProfile from "@/features/users/UserProfile";
-
 const Page = () => {
   return (
     <div>
@@ -7,7 +5,6 @@ const Page = () => {
       <a href="/api/auth/logout">Logout</a>
       <br></br>
       <a href="/api/auth/login">Login</a>
-      <UserProfile />
     </div>
   );
 };
