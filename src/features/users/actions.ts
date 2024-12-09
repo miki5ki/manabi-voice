@@ -9,9 +9,11 @@ export async function upsertUser(session: Session) {
   const user: UserProfile = session.user;
 
   try {
-    if (user.email) {
+    if (user.email && user.sub) {
       await prisma.user.upsert({
         create: {
+          name: user.name,
+          auth0Id: user.sub,
           email: session.user.email,
           is_active: true,
           role: "user",
