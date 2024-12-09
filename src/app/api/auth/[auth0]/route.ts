@@ -1,13 +1,9 @@
-import { handleAuth, handleCallback } from "@auth0/nextjs-auth0";
+import { AfterCallbackAppRoute, handleAuth, handleCallback, Session } from "@auth0/nextjs-auth0";
+import { NextRequest } from "next/server";
 
-const afterCallback = async (req, res, session) => {
-  console.log("Session in afterCallback:", session); // セッション情報の確認
-
-  if (session && session.user) {
-    console.log("User information in session:", session.user); // ユーザー情報の確認
-  } else {
-    console.log("No user information in session");
-  }
+import { upsertUser } from "@/features/users/actions";
+const afterCallback: AfterCallbackAppRoute = async (req: NextRequest, session: Session) => {
+  await upsertUser(session);
 
   return session;
 };
@@ -16,7 +12,7 @@ export const GET = handleAuth({
   callback: handleCallback({
     afterCallback,
     authorizationParams: {
-      scope: "openid profile email", // 必要なスコープを指定
+      scope: "openid profile email",
     },
   }),
 });
