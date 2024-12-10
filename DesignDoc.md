@@ -124,6 +124,7 @@ erDiagram
     string email "メールアドレス"
     enum is_active "サービスの退会をしているかどうか"
     enum role "管理者/配信者/視聴者のどれか"
+    string auth0Id "auth0の外部ID"
     timestamp createdAt
     timestamp updatedAt
   }
