@@ -16,6 +16,7 @@ model User {
   is_active Boolean
   role String
   episodes Episode[]
+  comments Comments[]
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt @default(now())
 }
@@ -34,7 +35,8 @@ model Episode {
   user User @relation(fields: [userId], references: [id])
   userId String
   audioId String @unique
-  audio Audio @relation(fields: [audioId], references: [id]) 
+  audio Audio @relation(fields: [audioId], references: [id])
+  comments Comments[] 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt @default(now())
 }
@@ -52,4 +54,14 @@ model Audio {
 model Category {
   id    String     @id @default(uuid())
   title String  @unique
+}
+
+
+model Comments {
+  id String @id @default(uuid())
+  description String
+  user User @relation(fields: [userId], references: [id])
+  userId String
+  episode Episode @relation(fields: [episodeId], references: [id])
+  episodeId String
 }
