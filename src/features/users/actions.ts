@@ -9,23 +9,26 @@ export async function upsertUser(session: Session) {
   const user: UserProfile = session.user;
 
   try {
-    if (user.email && user.sub) {
-      await prisma.user.upsert({
-        create: {
-          name: user.name,
-          auth0Id: user.sub,
-          email: session.user.email,
-          is_active: true,
-          role: "user",
-        },
-        update: {
-          is_active: true,
-        },
-        where: {
-          email: user.email,
-        },
-      });
+    if (!user.email || !user.sub || !user.name) {
+      console.error("DatabaseError");
+      return;
     }
+
+    await prisma.user.upsert({
+      create: {
+        name: user.name,
+        auth0Id: user.sub,
+        email: session.user.email,
+        is_active: true,
+        role: "user",
+      },
+      update: {
+        is_active: true,
+      },
+      where: {
+        email: user.email,
+      },
+    });
   } catch (e) {
     console.error("DatabaseError", e);
   }
