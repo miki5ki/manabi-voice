@@ -1,4 +1,4 @@
-import { CreateComment } from "@/features/comments/actions";
+import { CreateComment, getComments } from "@/features/comments/actions";
 
 type Props = {
   params: {
@@ -6,13 +6,19 @@ type Props = {
   };
   searchParams: object;
 };
-const EpisodeShowPage = (props: Props) => {
+const EpisodeShowPage = async (props: Props) => {
   const { params } = props;
   const { id } = params;
+  const comments = await getComments(id);
 
   return (
     <>
       <div>エピソードの詳細ページです</div>
+      {comments.map((comment) => (
+        <div key={comment.id}>
+          <text>{comment.description}</text>
+        </div>
+      ))}
       <form method="POST" action={CreateComment}>
         <input hidden value="8167baf4-b514-4f8e-9a43-d81bf9a8a305" name="userId" />
         <input hidden value={id} name="episodeId" />
