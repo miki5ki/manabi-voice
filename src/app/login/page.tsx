@@ -1,5 +1,5 @@
 const LoginPage = () => {
-  return <div>ログインページ</div>;
+  return <a href="/api/auth/login">Login</a>;
 };
 
 export default LoginPage;

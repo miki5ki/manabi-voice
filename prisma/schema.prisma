@@ -12,9 +12,11 @@ datasource db {
 
 model User {
   id String @id @default(uuid())
-  email String
+  name String
+  email String @unique
   is_active Boolean
   role String
+  auth0Id   String   @unique
   episodes Episode[]
   comments Comments[]
   createdAt DateTime @default(now())
@@ -49,13 +51,11 @@ model Audio {
   updatedAt DateTime @updatedAt @default(now())
 }
 
-
-
 model Category {
   id    String     @id @default(uuid())
-  title String  @unique
+  title String  
+  description  String?
 }
-
 
 model Comments {
   id String @id @default(uuid())
@@ -64,4 +64,18 @@ model Comments {
   userId String
   episode Episode @relation(fields: [episodeId], references: [id])
   episodeId String
+}
+model EpisodesCategoriesRelations {
+  id String  @id @default(uuid())
+  episodeId String @unique
+  categoryId String
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt @default(now())
+}
+model ChannelsCategoriesRelations {
+  id String  @id @default(uuid())
+  channelId String @unique
+  categoryId String
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt @default(now())
 }

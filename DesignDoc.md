@@ -118,65 +118,65 @@ erDiagram
 
 
 
-  users {
+  Users {
     bigint id PK
     string name "ユーザー名"
     string email "メールアドレス"
     enum is_active "サービスの退会をしているかどうか"
     enum role "管理者/配信者/視聴者のどれか"
-    timestamp created_at
-    timestamp updated_at
+    string auth0Id "auth0の外部ID"
+    timestamp createdAt
+    timestamp updatedAt
   }
 
-  channels {
+  Channels {
     bigint id PK
     string title "番組名"
     text description "番組の詳細説明"
     references users FK
-    timestamp created_at
-    timestamp updated_at
+    timestamp createdAt
+    timestamp updatedAt
   }
 
-  episodes {
+  Episodes {
     bigint id PK
     string title "エピソードのタイトル"
     text content "エピソード内容"
     references audios FK
     string audioId
     references users FK
-    string userId
-    timestamp created_at
-    timestamp updated_at
+    timestamp createdAt
+    timestamp updatedAt
   }
 
-  episodes_categories_relations {
+  EpisodesCategoriesRelations {
     bigint id PK
-    bigint episode_id FK
-    bigint category_id FK
-    timestamp created_at
-    timestamp updated_at
+    bigint episodeId FK
+    bigint categoryId FK
+    timestamp createdAt
+    timestamp updatedAt
   }
 
-  channels_categories_relations {
+  ChannelsCategoriesRelations {
     bigint id PK
-    bigint channel_id FK
-    bigint category_id FK
-    timestamp created_at
-    timestamp updated_at
+    bigint channelId FK
+    bigint categoryId FK
+    timestamp createdAt
+    timestamp updatedAt
   }
 
-  audios {
+  Audios {
     bigint id PK
     text file_path "ストレージ保管の音声ファイルの参照先"
-    timestamp created_at
-    timestamp updated_at
+    timestamp createdAt
+    timestamp updatedAt
   }
 
-  categories {
+  Categories {
     bigint id PK
     text name "カテゴリ名"
-    timestamp created_at
-    timestamp updated_at
+    timestamp createdAt
+    timestamp updatedAt
   }
 
 
