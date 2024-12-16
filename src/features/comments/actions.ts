@@ -44,6 +44,9 @@ export async function CreateComment(formData: FormData) {
 export async function getComments(id: string) {
   try {
     const comments = await prisma.comments.findMany({
+      orderBy: {
+        createdAt: "desc",
+      },
       where: {
         episodeId: id,
       },
