@@ -14,16 +14,17 @@ const EpisodeShowPage = async (props: Props) => {
   return (
     <>
       <div>エピソードの詳細ページです</div>
-      {comments.map((comment) => (
-        <div key={comment.id}>
-          <text>{comment.description}</text>
-        </div>
-      ))}
+      {comments &&
+        comments.map((comment) => (
+          <div key={comment.id}>
+            <text>{comment.description}</text>
+          </div>
+        ))}
       <form method="POST" action={CreateComment}>
-        <input hidden value="8167baf4-b514-4f8e-9a43-d81bf9a8a305" name="userId" />
+        <input hidden value="ffc21268-45cd-400d-9d46-c00314c77874" name="userId" />
         <input hidden value={id} name="episodeId" />
         <input type="input" name="description"></input>
-        <button>投稿</button>
+        <button type="submit">投稿</button>
       </form>
     </>
   );

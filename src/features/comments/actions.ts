@@ -40,3 +40,16 @@ export async function CreateComment(formData: FormData) {
   }
   revalidatePath(`/episodes${validatedFields.data.episodeId}`);
 }
+
+export async function getComments(id: string) {
+  try {
+    const comments = await prisma.comments.findMany({
+      where: {
+        episodeId: id,
+      },
+    });
+    return comments;
+  } catch (e) {
+    console.log("Database Error:", e);
+  }
+}
