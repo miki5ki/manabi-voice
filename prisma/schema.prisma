@@ -64,6 +64,8 @@ model Comments {
   userId String
   episode Episode @relation(fields: [episodeId], references: [id])
   episodeId String
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt @default(now())
 }
 model EpisodesCategoriesRelations {
   id String  @id @default(uuid())
