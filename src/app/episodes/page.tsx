@@ -29,6 +29,9 @@ const EpisodesPage = async () => {
                 <td>
                   <Link href={`/episodes/${episode.id}/edit`}>編集</Link>
                 </td>
+                <td>
+                  <Link href={`/episodes/${episode.id}`}>詳細</Link>
+                </td>
               </tr>
             </>
           ))}

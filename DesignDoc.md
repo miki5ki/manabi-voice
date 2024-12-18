@@ -180,6 +180,14 @@ erDiagram
   }
 
 
+  comments {
+    bigint id PK
+    text description "内容"
+    timestamp created_at
+    timestamp updated_at
+  }
+
+
 ```
 
 ### 非機能要件
