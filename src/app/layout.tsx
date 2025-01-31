@@ -1,16 +1,29 @@
-import { UserProvider } from "@auth0/nextjs-auth0/client";
+import { getSession } from "@auth0/nextjs-auth0";
+import { redirect } from "next/navigation";
+import React from "react";
+
+import { Header } from "./components/Header";
 
 export const metadata = {
   title: "学びボイス",
   description: "普段何気ない学びを仲間とクローズドに共有するための音声サービスです",
 };
 
-export default function RootLayout({ children }: { children: React.ReactNode }) {
+export default async function RootLayout({ children }: { children: React.ReactNode }) {
+  const session = await getSession();
+
+  if (!session) {
+    redirect("/api/auth/login");
+  }
+
+  const { user } = session;
+
   return (
     <html lang="ja">
-      <UserProvider>
-        <body>{children}</body>
-      </UserProvider>
+      <body>
+        <Header user={user} />
+        <main>{React.cloneElement(children as React.ReactElement)}</main>
+      </body>
     </html>
   );
 }
