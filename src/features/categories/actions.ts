@@ -7,6 +7,7 @@ import { z } from "zod";
 
 import { prisma } from "@/lib/prisma";
 import { prismaErrorHandler } from "@/lib/prismaErrorHandler";
+import { validateSchema } from "@/lib/validation";
 
 const CategorySchema = z.object({
   id: z.string(),
@@ -17,24 +18,17 @@ const CreateCategorySchema = CategorySchema.omit({ id: true });
 const DeleteCategorySchema = CategorySchema.omit({ title: true });
 
 export async function createCategory(formData: FormData) {
-  const validatedFields = CreateCategorySchema.safeParse({
-    title: formData.get("categoryTitle"),
-  });
-
-  if (!validatedFields.success) {
-    return new Response("リクエストの入力値が正しくありません", { status: 400 });
-  }
+  const validCategory = validateSchema(CreateCategorySchema, { title: formData.get("categoryTitle") });
 
   try {
     await prisma.category.create({
       data: {
-        title: validatedFields.data.title,
+        title: validCategory.title,
       },
     });
   } catch (e) {
     return prismaErrorHandler(e);
   }
-
   revalidatePath("/categories");
   redirect("/categories");
 }
@@ -64,49 +58,43 @@ export async function getCategories(): Promise<Category[]> {
 }
 
 export async function updateCategory(formData: FormData) {
-  const validatedFields = CategorySchema.safeParse({
+  const validCategory = validateSchema(CategorySchema, {
     id: formData.get("categoryId"),
     title: formData.get("categoryTitle"),
   });
 
-  if (!validatedFields.success) {
-    return new Response("リクエストの入力値が正しくありません", { status: 400 });
-  }
-
   try {
     await prisma.category.update({
       data: {
-        title: validatedFields.data.title,
+        title: validCategory.title,
       },
       where: {
-        id: validatedFields.data.id,
+        id: validCategory.id,
       },
     });
   } catch (e) {
     return prismaErrorHandler(e);
   }
+
   revalidatePath("/categories");
   redirect("/categories");
 }
 
 export async function deleteCategory(formData: FormData) {
-  const validatedFields = DeleteCategorySchema.safeParse({
+  const validCategory = validateSchema(DeleteCategorySchema, {
     id: formData.get("categoryId"),
   });
-
-  if (!validatedFields.success) {
-    return new Response("リクエストの入力値が正しくありません", { status: 400 });
-  }
 
   try {
     await prisma.category.delete({
       where: {
-        id: validatedFields.data.id,
+        id: validCategory.id,
       },
     });
   } catch (e) {
     return prismaErrorHandler(e);
   }
+
   revalidatePath("/categories");
   redirect("/categories");
 }
