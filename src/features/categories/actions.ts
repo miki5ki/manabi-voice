@@ -6,6 +6,7 @@ import { redirect } from "next/navigation";
 import { z } from "zod";
 
 import { prisma } from "@/lib/prisma";
+import { prismaErrorHandler } from "@/lib/prismaErrorHandler";
 
 const CategorySchema = z.object({
   id: z.string(),
@@ -21,8 +22,7 @@ export async function createCategory(formData: FormData) {
   });
 
   if (!validatedFields.success) {
-    console.error("Validation Error:", validatedFields.error);
-    throw new Error("Validation failed");
+    return new Response("リクエストの入力値が正しくありません", { status: 400 });
   }
 
   try {
@@ -32,32 +32,31 @@ export async function createCategory(formData: FormData) {
       },
     });
   } catch (e) {
-    console.log("Database Error:", e);
+    return prismaErrorHandler(e);
   }
 
   revalidatePath("/categories");
   redirect("/categories");
 }
 
-export async function getCategory(categoryId: string): Promise<Category> {
+export async function getCategory(categoryId: string): Promise<Category | null> {
   try {
     const res = await prisma.category.findUnique({
       where: {
         id: categoryId,
       },
     });
-
-    return res ?? { id: "", title: "" };
+    return res;
   } catch (e) {
-    console.log("DataBaseError", e);
-    throw new Error(`カテゴリが見つかりませんでした。存在しないIDか、データベースに問題がある可能性があります。`);
+    console.error("Prisma Error in getCategory:", e);
+    return null;
   }
 }
 
 export async function getCategories(): Promise<Category[]> {
   try {
     const res = await prisma.category.findMany();
-    return res ?? [];
+    return res;
   } catch (e) {
     console.error("Database Error", e);
     return [];
@@ -71,13 +70,12 @@ export async function updateCategory(formData: FormData) {
   });
 
   if (!validatedFields.success) {
-    throw new Error("Validation failed");
+    return new Response("リクエストの入力値が正しくありません", { status: 400 });
   }
 
   try {
     await prisma.category.update({
       data: {
-        id: validatedFields.data.id,
         title: validatedFields.data.title,
       },
       where: {
@@ -85,7 +83,7 @@ export async function updateCategory(formData: FormData) {
       },
     });
   } catch (e) {
-    console.error("DataBaseError", e);
+    return prismaErrorHandler(e);
   }
   revalidatePath("/categories");
   redirect("/categories");
@@ -97,8 +95,7 @@ export async function deleteCategory(formData: FormData) {
   });
 
   if (!validatedFields.success) {
-    console.error("Validation Error:", validatedFields.error);
-    throw new Error("Validation failed");
+    return new Response("リクエストの入力値が正しくありません", { status: 400 });
   }
 
   try {
@@ -108,7 +105,7 @@ export async function deleteCategory(formData: FormData) {
       },
     });
   } catch (e) {
-    console.error("DataBaseError", e);
+    return prismaErrorHandler(e);
   }
   revalidatePath("/categories");
   redirect("/categories");
