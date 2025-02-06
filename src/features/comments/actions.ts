@@ -7,14 +7,12 @@ import { prisma } from "@/lib/prisma";
 
 const CommentSchema = z.object({
   id: z.string(),
-  createdAt: z.string().datetime(),
   description: z.string(),
   episodeId: z.string(),
-  updatedAt: z.string().datetime(),
   userId: z.string(),
 });
 
-const CreateCommentSchema = CommentSchema.omit({ id: true, createdAt: true, updatedAt: true });
+const CreateCommentSchema = CommentSchema.omit({ id: true });
 
 export async function CreateComment(formData: FormData) {
   const validatedFields = CreateCommentSchema.safeParse({
