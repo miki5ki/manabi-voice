@@ -4,6 +4,8 @@ import { revalidatePath } from "next/cache";
 import { z } from "zod";
 
 import { prisma } from "@/lib/prisma";
+import { prismaErrorHandler } from "@/lib/prismaErrorHandler";
+import { validateSchema } from "@/lib/validation";
 
 const CommentSchema = z.object({
   id: z.string(),
@@ -15,33 +17,29 @@ const CommentSchema = z.object({
 const CreateCommentSchema = CommentSchema.omit({ id: true });
 
 export async function CreateComment(formData: FormData) {
-  const validatedFields = CreateCommentSchema.safeParse({
+  const validComment = validateSchema(CreateCommentSchema, {
     description: formData.get("description"),
     episodeId: formData.get("episodeId"),
     userId: formData.get("userId"),
   });
 
-  if (!validatedFields.success) {
-    throw new Error("Validation failed");
-  }
-
   try {
     await prisma.comments.create({
       data: {
-        description: validatedFields.data.description,
-        episodeId: validatedFields.data.episodeId,
-        userId: validatedFields.data.userId,
+        description: validComment.description,
+        episodeId: validComment.episodeId,
+        userId: validComment.userId,
       },
     });
   } catch (e) {
-    console.log("Database Error:", e);
+    return prismaErrorHandler(e);
   }
-  revalidatePath(`/episodes${validatedFields.data.episodeId}`);
+  revalidatePath(`/episodes${validComment.episodeId}`);
 }
 
 export async function getComments(id: string) {
   try {
-    const comments = await prisma.comments.findMany({
+    const res = await prisma.comments.findMany({
       orderBy: {
         createdAt: "desc",
       },
@@ -49,8 +47,8 @@ export async function getComments(id: string) {
         episodeId: id,
       },
     });
-    return comments;
+    return res;
   } catch (e) {
-    console.log("Database Error:", e);
+    console.error("Database Error:", e);
   }
 }
