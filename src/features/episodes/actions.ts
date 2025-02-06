@@ -12,20 +12,16 @@ const EpisodeSchema = z.object({
   audioId: z.string(),
   categoryId: z.string(),
   content: z.string(),
-  createdAt: z.string().datetime(),
-  updatedAt: z.string().datetime(),
   userId: z.string(),
 });
 
-const CreateEpisodeSchema = EpisodeSchema.omit({ id: true, createdAt: true, updatedAt: true });
-const UpdateEpisodeSchema = EpisodeSchema.omit({ createdAt: true, updatedAt: true });
+const CreateEpisodeSchema = EpisodeSchema.omit({ id: true });
+
 const DeleteEpisodeSchema = EpisodeSchema.omit({
   title: true,
   audioId: true,
   categoryId: true,
   content: true,
-  createdAt: true,
-  updatedAt: true,
   userId: true,
 });
 export async function createEpisode(formData: FormData) {
