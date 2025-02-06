@@ -42,7 +42,7 @@ export async function getCategory(categoryId: string): Promise<Category | null> 
     });
     return res;
   } catch (e) {
-    console.error("Prisma Error in getCategory:", e);
+    console.error("Database Error", e);
     return null;
   }
 }
