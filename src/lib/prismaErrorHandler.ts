@@ -5,7 +5,7 @@ import { HttpError } from "./http-error";
 export const prismaErrorHandler = (e: unknown) => {
   if (e instanceof Prisma.PrismaClientKnownRequestError) {
     if (e.code === "P2002") {
-      throw new HttpError(409, `エラーコード：${e.code} 「${e.meta?.target}」はすでにデータベースに登録されています`);
+      throw new HttpError(409, `エラーコード：P2002「${e.meta?.target}」はすでにデータベースに登録されています`);
     }
     console.error("PrismaClientKnownRequestError:", e.code, e.message);
     throw new HttpError(400, `エラーコード：${e.code} このデータはデータベースの制約条件に該当しています`);
