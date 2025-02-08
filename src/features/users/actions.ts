@@ -7,6 +7,8 @@ import { cache } from "react";
 import { z } from "zod";
 
 import { prisma } from "@/lib/prisma";
+import { prismaErrorHandler } from "@/lib/prismaErrorHandler";
+import { validateSchema } from "@/lib/validation";
 
 import { DeactivateUserInfo } from "./types";
 
@@ -39,56 +41,54 @@ export async function upsertUser(session: Session) {
       console.error("Missing required user information: email, sub, or name.");
       return;
     }
-
-    const res = await prisma.user.upsert({
-      create: {
-        name: user.name,
-        auth0Id: user.sub,
-        email: session.user.email,
-        is_active: true,
-        role: "user",
-      },
-      update: {
-        is_active: true,
-      },
-      where: {
-        email: user.email,
-      },
-    });
-
-    if (!res?.id) {
-      console.error("User create/upsert failed.");
-      return;
+    try {
+      const res = await prisma.user.upsert({
+        create: {
+          name: user.name,
+          auth0Id: user.sub,
+          email: user.email,
+          is_active: true,
+          role: "user",
+        },
+        update: {
+          is_active: true,
+        },
+        where: {
+          email: user.email,
+        },
+      });
+      if (!res?.id) {
+        console.error("User create/upsert failed.");
+        return;
+      }
+      return res;
+    } catch (e) {
+      return prismaErrorHandler(e);
     }
-  } catch (error) {
-    console.error(error);
+  } catch (e) {
+    console.error("Database Error", e);
   }
 }
 
 export const updateUser = async (formData: FormData) => {
-  const validatedFields = UpdateUserSchema.safeParse({
+  const validUser = validateSchema(UpdateUserSchema, {
     id: formData.get("userId"),
     name: formData.get("userName"),
     email: formData.get("userEmail"),
   });
 
   try {
-    if (!validatedFields.success) {
-      console.error("Validation Error:", validatedFields.error);
-      throw new Error("Validation failed");
-    }
-
     await prisma.user.update({
       data: {
-        name: validatedFields.data.name,
-        email: validatedFields.data.email,
+        name: validUser.name,
+        email: validUser.email,
       },
       where: {
-        id: validatedFields.data.id,
+        id: validUser.id,
       },
     });
   } catch (e) {
-    console.error("DatabaseError", e);
+    return prismaErrorHandler(e);
   }
 };
 
@@ -98,7 +98,7 @@ export const getUser = cache(async (auth0Id: string): Promise<User | null> => {
       where: { auth0Id },
     });
 
-    return userProfile || null;
+    return userProfile;
   } catch (e) {
     console.error("DatabaseError", e);
     return null;
@@ -115,39 +115,29 @@ export const getUsers = async (role: string) => {
     return allUsers;
   } catch (e) {
     console.error("DatabaseError", e);
-    return null;
+    return [];
   }
 };
 
 export const deactivateUser = async (deactivateInfo: DeactivateUserInfo) => {
-  const validatedFields = DeactivateUserSchema.safeParse({
+  const validUser = validateSchema(DeactivateUserSchema, {
     loginUserId: deactivateInfo.loginUserId,
     loginUserRole: deactivateInfo.loginUserRole,
     userProfileId: deactivateInfo.userProfileId,
   });
 
   try {
-    if (!validatedFields.success) {
-      console.error("Validation Error:", validatedFields.error);
-      throw new Error("Validation failed");
-    }
-
-    if (
-      validatedFields.data.loginUserId == validatedFields.data.userProfileId ||
-      validatedFields.data.loginUserRole == "admin"
-    ) {
-      const res = await prisma.user.update({
+    if (validUser.loginUserId == validUser.userProfileId || validUser.loginUserRole == "admin") {
+      await prisma.user.update({
         data: {
           is_active: false,
         },
         where: {
-          id: validatedFields.data.userProfileId,
+          id: validUser.userProfileId,
         },
       });
-      return res;
     }
   } catch (e) {
-    console.error("DatabaseError", e);
-    return null;
+    return prismaErrorHandler(e);
   }
 };

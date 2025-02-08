@@ -5,6 +5,8 @@ import { redirect } from "next/navigation";
 import { z } from "zod";
 
 import { prisma } from "@/lib/prisma";
+import { prismaErrorHandler } from "@/lib/prismaErrorHandler";
+import { validateSchema } from "@/lib/validation";
 
 const EpisodeSchema = z.object({
   id: z.string(),
@@ -25,7 +27,7 @@ const DeleteEpisodeSchema = EpisodeSchema.omit({
   userId: true,
 });
 export async function createEpisode(formData: FormData) {
-  const validatedFields = CreateEpisodeSchema.safeParse({
+  const validEpisode = validateSchema(CreateEpisodeSchema, {
     title: formData.get("episodeTitle"),
     audioId: formData.get("audioId"),
     categoryId: formData.get("categoryId"),
@@ -33,23 +35,19 @@ export async function createEpisode(formData: FormData) {
     userId: formData.get("userId"),
   });
 
-  if (!validatedFields.success) {
-    throw new Error("Validation failed");
-  }
-
   try {
     await prisma.$transaction(async (prisma) => {
       const res = await prisma.episode.create({
         data: {
-          title: validatedFields.data.title,
-          audioId: validatedFields.data.audioId,
-          content: validatedFields.data.content,
-          userId: validatedFields.data.userId,
+          title: validEpisode.title,
+          audioId: validEpisode.audioId,
+          content: validEpisode.content,
+          userId: validEpisode.userId,
         },
       });
 
       const episodeId = res.id;
-      const categoryId = validatedFields.data.categoryId;
+      const categoryId = validEpisode.categoryId;
 
       await prisma.episodesCategoriesRelations.create({
         data: {
@@ -59,7 +57,7 @@ export async function createEpisode(formData: FormData) {
       });
     });
   } catch (e) {
-    console.error(e);
+    return prismaErrorHandler(e);
   }
 
   revalidatePath("/episodes");
@@ -73,25 +71,25 @@ export async function getEpisode(episodeId: string) {
         id: episodeId,
       },
     });
-    return res ?? {};
+    return res;
   } catch (e) {
-    console.error(e);
-    return {};
+    console.error("Database Error", e);
+    return null;
   }
 }
 
 export async function getEpisodes() {
   try {
     const res = await prisma.episode.findMany();
-    return res ?? [];
+    return res;
   } catch (e) {
-    console.error(e);
+    console.error("Database Error", e);
     return [];
   }
 }
 
 export async function updateEpisode(formData: FormData) {
-  const validatedFields = UpdateEpisodeSchema.safeParse({
+  const validEpisode = validateSchema(EpisodeSchema, {
     id: formData.get("episodeId"),
     title: formData.get("episodeTitle"),
     audioId: formData.get("audioId"),
@@ -100,24 +98,20 @@ export async function updateEpisode(formData: FormData) {
     userId: formData.get("userId"),
   });
 
-  if (!validatedFields.success) {
-    console.error("Validation Error:", validatedFields.error);
-    throw new Error("Validation failed");
-  }
   try {
     await prisma.$transaction(async (prisma) => {
       await prisma.episode.update({
         data: {
-          title: validatedFields.data.title,
-          audioId: validatedFields.data.audioId,
-          content: validatedFields.data.content,
-          userId: validatedFields.data.userId,
+          title: validEpisode.title,
+          audioId: validEpisode.audioId,
+          content: validEpisode.content,
+          userId: validEpisode.userId,
         },
-        where: { id: validatedFields.data.id },
+        where: { id: validEpisode.id },
       });
 
-      const categoryId = validatedFields.data.categoryId;
-      const episodeId = validatedFields.data.id;
+      const categoryId = validEpisode.categoryId;
+      const episodeId = validEpisode.id;
 
       await prisma.episodesCategoriesRelations.upsert({
         create: {
@@ -131,39 +125,33 @@ export async function updateEpisode(formData: FormData) {
       });
     });
   } catch (e) {
-    console.error("Database Error:", e);
-    return {};
+    return prismaErrorHandler(e);
   }
   revalidatePath("/episodes");
   redirect("/episodes");
 }
 
 export async function deleteEpisode(formData: FormData) {
-  const validatedFields = DeleteEpisodeSchema.safeParse({
+  const validEpisode = validateSchema(DeleteEpisodeSchema, {
     id: formData.get("episodeId"),
   });
-  if (!validatedFields.success) {
-    console.error("Validation Error:", validatedFields.error);
-    return null;
-  }
 
   try {
     await prisma.$transaction(async (prisma) => {
       await prisma.episode.delete({
         where: {
-          id: validatedFields.data.id,
+          id: validEpisode.id,
         },
       });
 
       await prisma.episodesCategoriesRelations.delete({
         where: {
-          episodeId: validatedFields.data.id,
+          episodeId: validEpisode.id,
         },
       });
     });
   } catch (e) {
-    console.error("Database Error:", e);
-    return {};
+    return prismaErrorHandler(e);
   }
   revalidatePath("/episodes");
   redirect("/episodes");

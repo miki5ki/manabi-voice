@@ -6,6 +6,8 @@ import { redirect } from "next/navigation";
 import { z } from "zod";
 
 import { prisma } from "@/lib/prisma";
+import { prismaErrorHandler } from "@/lib/prismaErrorHandler";
+import { validateSchema } from "@/lib/validation";
 
 const ChannelSchema = z.object({
   id: z.string(),
@@ -18,28 +20,23 @@ const CreateChannelSchema = ChannelSchema.omit({ id: true });
 const DeleteChannelSchema = ChannelSchema.omit({ title: true, categoryId: true, description: true });
 
 export async function createChannel(formData: FormData) {
-  const validatedFields = CreateChannelSchema.safeParse({
+  const validChannel = validateSchema(CreateChannelSchema, {
     title: formData.get("channelTitle"),
     categoryId: formData.get("categoryId"),
     description: formData.get("channelDescription"),
   });
 
-  if (!validatedFields.success) {
-    console.error("Validation Error:", validatedFields.error);
-    throw new Error("Validation failed");
-  }
-
   try {
     await prisma.$transaction(async (prisma) => {
       const res = await prisma.channel.create({
         data: {
-          title: validatedFields.data.title,
-          description: validatedFields.data.description,
+          title: validChannel.title,
+          description: validChannel.description,
         },
       });
 
       const channelId = res.id;
-      const categoryId = validatedFields.data.categoryId;
+      const categoryId = validChannel.categoryId;
 
       await prisma.channelsCategoriesRelations.create({
         data: {
@@ -49,8 +46,7 @@ export async function createChannel(formData: FormData) {
       });
     });
   } catch (e) {
-    console.log("Database Error:", e);
-    throw new Error("Transaction failed");
+    return prismaErrorHandler(e);
   }
   revalidatePath("/channels");
   redirect("/channels");
@@ -59,14 +55,14 @@ export async function createChannel(formData: FormData) {
 export async function getChannels(): Promise<Channel[]> {
   try {
     const res = await prisma.channel.findMany();
-    return res ?? [];
+    return res;
   } catch (e) {
     console.error("Database Error", e);
     return [];
   }
 }
 
-export async function getChannel(channelId: string): Promise<Channel | object> {
+export async function getChannel(channelId: string): Promise<Channel | null> {
   try {
     const res = await prisma.channel.findUnique({
       where: {
@@ -74,34 +70,30 @@ export async function getChannel(channelId: string): Promise<Channel | object> {
       },
     });
 
-    return res ?? {};
+    return res;
   } catch (e) {
     console.error("Database Error:", e);
-    return {};
+    return null;
   }
 }
 
 export async function updateChannel(formData: FormData) {
-  const validatedFields = ChannelSchema.safeParse({
+  const validChannel = validateSchema(ChannelSchema, {
     id: formData.get("channelId"),
     title: formData.get("channelTitle"),
     categoryId: formData.get("categoryId"),
     description: formData.get("channelDescription"),
   });
 
-  if (!validatedFields.success) {
-    console.error("Validation Error:", validatedFields.error);
-    throw new Error("Validation failed");
-  }
   try {
     await prisma.$transaction(async (prisma) => {
       await prisma.channel.update({
-        data: { title: validatedFields.data.title, description: validatedFields.data.description },
-        where: { id: validatedFields.data.id },
+        data: { title: validChannel.title, description: validChannel.description },
+        where: { id: validChannel.id },
       });
 
-      const categoryId = validatedFields.data.categoryId;
-      const channelId = validatedFields.data.id;
+      const categoryId = validChannel.categoryId;
+      const channelId = validChannel.id;
 
       await prisma.channelsCategoriesRelations.upsert({
         create: {
@@ -115,25 +107,20 @@ export async function updateChannel(formData: FormData) {
       });
     });
   } catch (e) {
-    console.error("Database Error:", e);
-    return {};
+    return prismaErrorHandler(e);
   }
   revalidatePath("/channels");
   redirect("/channels");
 }
 
 export async function deleteChannel(formData: FormData) {
-  const validatedFields = DeleteChannelSchema.safeParse({
+  const validChannel = validateSchema(DeleteChannelSchema, {
     id: formData.get("channelId"),
   });
-  if (!validatedFields.success) {
-    console.error("Validation Error:", validatedFields.error);
-    return null;
-  }
 
   try {
     await prisma.$transaction(async (prisma) => {
-      const channelId = validatedFields.data.id;
+      const channelId = validChannel.id;
 
       await prisma.channel.delete({
         where: {
@@ -148,8 +135,7 @@ export async function deleteChannel(formData: FormData) {
       });
     });
   } catch (e) {
-    console.error("Database Error:", e);
-    return {};
+    return prismaErrorHandler(e);
   }
   revalidatePath("/channels");
   redirect("/channels");
