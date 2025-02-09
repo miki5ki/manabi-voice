@@ -1,9 +1,8 @@
 import { notFound } from "next/navigation";
 
+import { DeactivateButton } from "@/app/components/DeactivateButton";
 import { getAuth0User } from "@/features/auth/actions";
 import { getUsers } from "@/features/users/actions";
-
-import { DeactivateButton } from "../components/DeactivateButton";
 
 const page = async () => {
   const loginUserProfile = await getAuth0User(true);
