@@ -14,7 +14,7 @@ export const CategoryCard = (props: Category) => {
               alt="カテゴリーの画像"
               image="https://images.pexels.com/photos/3184416/pexels-photo-3184416.jpeg"
             />
-            <CardContent>
+            <CardContent sx={{ display: "flex", flexDirection: "column", minHeight: "80px" }}>
               <Typography>{description}</Typography>
             </CardContent>
           </CardActionArea>
