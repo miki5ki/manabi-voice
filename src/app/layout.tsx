@@ -23,7 +23,7 @@ export default async function RootLayout({ children }: { children: React.ReactNo
       <body>
         <Providers>
           <Header user={user} />
-          <main>{React.cloneElement(children as React.ReactElement)}</main>
+          <main>{children}</main>
         </Providers>
       </body>
     </html>
