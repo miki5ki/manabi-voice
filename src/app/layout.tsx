@@ -1,5 +1,4 @@
 import { getSession } from "@auth0/nextjs-auth0";
-import { CssBaseline } from "@mui/material";
 import { redirect } from "next/navigation";
 import React from "react";
 
@@ -24,9 +23,7 @@ export default async function RootLayout({ children }: { children: React.ReactNo
       <body>
         <Providers>
           <Header user={user} />
-          <CssBaseline>
-            <main>{React.cloneElement(children as React.ReactElement)}</main>
-          </CssBaseline>
+          <main>{React.cloneElement(children as React.ReactElement)}</main>
         </Providers>
       </body>
     </html>
