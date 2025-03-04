@@ -3,7 +3,7 @@ import { redirect } from "next/navigation";
 import React from "react";
 
 import { Header } from "./components/Header";
-
+import { Providers } from "./providers";
 export const metadata = {
   title: "学びボイス",
   description: "普段何気ない学びを仲間とクローズドに共有するための音声サービスです",
@@ -21,8 +21,10 @@ export default async function RootLayout({ children }: { children: React.ReactNo
   return (
     <html lang="ja">
       <body>
-        <Header user={user} />
-        <main>{React.cloneElement(children as React.ReactElement)}</main>
+        <Providers>
+          <Header user={user} />
+          <main>{children}</main>
+        </Providers>
       </body>
     </html>
   );
