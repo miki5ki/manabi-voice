@@ -1,5 +1,7 @@
-import Link from "next/link";
+import { Grid2 } from "@mui/material";
 
+import { ViewAction } from "@/app/components/ViewAction";
+import { ViewCard } from "@/app/components/ViewCard";
 import { getChannels } from "@/features/channels/actions";
 
 const ChannelsPage = async () => {
@@ -7,30 +9,13 @@ const ChannelsPage = async () => {
 
   return (
     <>
-      <Link href="/channels/create">新規作成</Link>
-      <table>
-        <thead>
-          <tr>
-            <th>タイトル</th>
-            <th>詳細</th>
-            <th />
-            <th />
-          </tr>
-        </thead>
-        <tbody>
-          {channels.map((channel) => (
-            <>
-              <tr key={channel.id}>
-                <td>{channel.title}</td>
-                <td>{channel.description}</td>
-                <td>
-                  <Link href={`/channels/${channel.id}/edit`}>編集</Link>
-                </td>
-              </tr>
-            </>
-          ))}
-        </tbody>
-      </table>
+      <ViewAction viewType="channels" />
+
+      <Grid2 container spacing={2} m={3}>
+        {channels.map((channel) => (
+          <ViewCard {...channel} viewType="channels" key={channel.id} />
+        ))}
+      </Grid2>
     </>
   );
 };
