@@ -1,17 +1,20 @@
-import { Box } from "@mui/material";
+import { Box, SxProps, Theme } from "@mui/material";
 
 export const SoundPlayer = () => {
   return (
-    <Box sx={{ mt: 1, width: "100%" }}>
-      <audio
-        preload="metadata"
-        controls
-        style={{
-          width: "80%",
-        }}
-      >
+    <Box sx={boxStyles}>
+      <Box component="audio" preload="metadata" controls sx={audioStyles}>
         <source src={"/sample_sound.mp3"} type="audio/mp3" />
-      </audio>
+      </Box>
     </Box>
   );
+};
+
+const audioStyles: SxProps<Theme> = {
+  width: "80%",
+};
+
+const boxStyles: SxProps<Theme> = {
+  mt: 1,
+  width: "100%",
 };
