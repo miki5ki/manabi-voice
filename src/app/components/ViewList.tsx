@@ -3,32 +3,6 @@ import { Episode } from "@prisma/client";
 
 import { SoundPlayer } from "./SoundPlayer";
 
-export const ViewList = (props: Episode) => {
-  const { title, content } = props;
-
-  return (
-    <Card sx={cardStyle}>
-      <CardHeader
-        avatar={
-          <Avatar
-            sx={avatarStyle}
-            aria-label="recipe"
-            src="https://images.pexels.com/photos/3184416/pexels-photo-3184416.jpeg"
-          />
-        }
-        sx={cardHeaderStyle}
-      />
-      <CardContent sx={cardContentStyle}>
-        <Typography variant="subtitle1">{title}</Typography>
-        <Typography variant="body1" sx={typographyStyle}>
-          {content}
-        </Typography>
-        <SoundPlayer />
-      </CardContent>
-    </Card>
-  );
-};
-
 const cardStyle: SxProps<Theme> = {
   alignItems: "center",
   display: "flex",
@@ -51,4 +25,29 @@ const cardContentStyle: SxProps<Theme> = {
 
 const typographyStyle: SxProps<Theme> = {
   color: "text.secondary",
+};
+
+export const ViewList = (props: Episode) => {
+  const { title, content } = props;
+  return (
+    <Card sx={cardStyle}>
+      <CardHeader
+        avatar={
+          <Avatar
+            sx={avatarStyle}
+            aria-label="recipe"
+            src="https://images.pexels.com/photos/3184416/pexels-photo-3184416.jpeg"
+          />
+        }
+        sx={cardHeaderStyle}
+      />
+      <CardContent sx={cardContentStyle}>
+        <Typography variant="subtitle1">{title}</Typography>
+        <Typography variant="body1" sx={typographyStyle}>
+          {content}
+        </Typography>
+        <SoundPlayer />
+      </CardContent>
+    </Card>
+  );
 };

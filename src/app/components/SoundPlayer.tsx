@@ -1,5 +1,14 @@
 import { Box, SxProps, Theme } from "@mui/material";
 
+const audioStyles: SxProps<Theme> = {
+  width: "80%",
+};
+
+const boxStyles: SxProps<Theme> = {
+  mt: 1,
+  width: "100%",
+};
+
 export const SoundPlayer = () => {
   return (
     <Box sx={boxStyles}>
@@ -8,13 +17,4 @@ export const SoundPlayer = () => {
       </Box>
     </Box>
   );
-};
-
-const audioStyles: SxProps<Theme> = {
-  width: "80%",
-};
-
-const boxStyles: SxProps<Theme> = {
-  mt: 1,
-  width: "100%",
 };
