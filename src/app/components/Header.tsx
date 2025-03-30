@@ -24,6 +24,7 @@ export const Header = async (props: Claims) => {
             <Toolbar>
               <Avatar src="/logo.png" alt="ロゴ" sx={{ height: 52, mr: 3, width: 52 }} />
               <Box>
+                {/* muiではbuttonにhrefを指定するとaタグとしてレンダリングされるためbuttonタグを使用 */}
                 {pages.map((page) => (
                   <Button key={page.link} href={page.link} color="inherit">
                     {page.title}
