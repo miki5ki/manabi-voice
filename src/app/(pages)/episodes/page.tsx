@@ -2,7 +2,7 @@ import { Stack } from "@mui/material";
 import { Episode } from "@prisma/client";
 import Link from "next/link";
 
-import { ViewList } from "@/app/components/ViewList";
+import { WideCard } from "@/app/components/WideCard";
 import { getEpisodes } from "@/features/episodes/actions";
 
 const EpisodesPage = async () => {
@@ -18,7 +18,7 @@ const EpisodesPage = async () => {
 
       <Stack spacing={5} mx={4}>
         {episodes.map((episode: Episode) => (
-          <ViewList key={episode.id} {...episode} />
+          <WideCard key={episode.id} {...episode} />
         ))}
       </Stack>
     </>
