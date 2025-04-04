@@ -37,15 +37,18 @@ export async function CreateComment(formData: FormData) {
   revalidatePath(`/episodes${validComment.episodeId}`);
 }
 
-export async function getComments(id: string) {
+export async function getComments(episodeId: string) {
   try {
     const res = await prisma.comments.findMany({
+      include: {
+        user: {
+          select: { name: true },
+        },
+      },
       orderBy: {
         createdAt: "desc",
       },
-      where: {
-        episodeId: id,
-      },
+      where: { episodeId },
     });
     return res;
   } catch (e) {

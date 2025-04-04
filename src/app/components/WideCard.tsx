@@ -27,7 +27,7 @@ const typographyStyle: SxProps<Theme> = {
   color: "text.secondary",
 };
 
-export const ViewList = (props: Episode) => {
+export const WideCard = (props: Episode) => {
   const { title, content } = props;
   return (
     <Card sx={cardStyle}>
