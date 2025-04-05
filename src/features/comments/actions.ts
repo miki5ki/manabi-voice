@@ -50,7 +50,16 @@ export async function getComments(episodeId: string) {
       },
       where: { episodeId },
     });
-    return res;
+    const formattedComments = res.map((comment) => ({
+      ...comment,
+      createdAtFormatted: new Date(comment.createdAt).toLocaleString("ja-JP", {
+        day: "numeric",
+        month: "long",
+        year: "numeric",
+      }),
+    }));
+
+    return formattedComments;
   } catch (e) {
     console.error("Database Error:", e);
   }
