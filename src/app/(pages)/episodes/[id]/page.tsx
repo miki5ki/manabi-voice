@@ -1,4 +1,31 @@
+import { AccountCircle } from "@mui/icons-material";
+import { Box, Button, IconButton, Stack, SxProps, TextField, Theme, Typography } from "@mui/material";
+import { notFound } from "next/navigation";
+
+import { WideCard } from "@/app/components/WideCard";
+import { getAuth0User } from "@/features/auth/actions";
 import { CreateComment, getComments } from "@/features/comments/actions";
+import { getEpisode } from "@/features/episodes/actions";
+
+const buttonStyles: SxProps<Theme> = {
+  width: "80%",
+};
+
+const StackStyle = {
+  alignItems: "center",
+  flexDirection: "row",
+  gap: 1,
+};
+
+const commentTextStyle = {
+  mx: 1,
+};
+
+const commentFormStyle = {
+  alignItems: "center",
+  display: "flex",
+  gap: "8px",
+};
 
 type Props = {
   params: {
@@ -7,25 +34,62 @@ type Props = {
   searchParams: object;
 };
 const EpisodeShowPage = async (props: Props) => {
+  const loginUserProfile = await getAuth0User(true);
+  if (!loginUserProfile) notFound();
   const { params } = props;
   const { id } = params;
+  const episode = await getEpisode(id);
   const comments = await getComments(id);
+  if (!episode || !comments) notFound();
+
+  const formatter = new Intl.DateTimeFormat("ja-JP", {
+    day: "numeric",
+    month: "long",
+  });
 
   return (
     <>
-      <div>エピソードの詳細ページです</div>
-      {comments &&
-        comments.map((comment) => (
-          <div key={comment.id}>
-            <text>{comment.description}</text>
-          </div>
-        ))}
-      <form method="POST" action={CreateComment}>
-        <input hidden value="ffc21268-45cd-400d-9d46-c00314c77874" name="userId" />
-        <input hidden value={id} name="episodeId" />
-        <input type="input" name="description"></input>
-        <button type="submit">投稿</button>
-      </form>
+      <Box m={4}>
+        <WideCard key={episode.id} {...episode} />
+        <Typography my={3} variant="h6">
+          コメント
+        </Typography>
+        <Stack sx={StackStyle}>
+          <IconButton color="inherit" size="large">
+            <AccountCircle />
+          </IconButton>
+          <form method="POST" action={CreateComment} style={commentFormStyle}>
+            <input type="hidden" value={id} name="episodeId" />
+            <input type="hidden" value={loginUserProfile.id} name="userId" />
+            <TextField
+              label="コメント"
+              variant="outlined"
+              id="description"
+              size="small"
+              sx={{ minWidth: 400 }}
+              name="description"
+            />
+            <Button variant="contained" sx={buttonStyles} type="submit">
+              投稿
+            </Button>
+          </form>
+        </Stack>
+        <Stack spacing={2}>
+          {comments &&
+            comments.map((comment) => (
+              <Stack key={comment.id} sx={StackStyle}>
+                <IconButton color="inherit" size="large">
+                  <AccountCircle />
+                </IconButton>
+                <Stack>
+                  <Typography variant="caption">{comment.user.name}</Typography>
+                  <Typography variant="caption">{formatter.format(new Date(comment.createdAt))}</Typography>
+                </Stack>
+                <Typography sx={commentTextStyle}>{comment.description}</Typography>
+              </Stack>
+            ))}
+        </Stack>
+      </Box>
     </>
   );
 };
