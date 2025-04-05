@@ -1,6 +1,7 @@
-import { getSession } from "@auth0/nextjs-auth0";
 import { redirect } from "next/navigation";
 import React from "react";
+
+import { auth0 } from "@/lib/auth0";
 
 import { Header } from "./components/Header";
 import { Providers } from "./providers";
@@ -10,7 +11,7 @@ export const metadata = {
 };
 
 export default async function RootLayout({ children }: { children: React.ReactNode }) {
-  const session = await getSession();
+  const session = await auth0.getSession();
 
   if (!session) {
     redirect("/api/auth/login");
