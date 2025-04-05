@@ -42,11 +42,6 @@ const EpisodeShowPage = async (props: Props) => {
   const comments = await getComments(id);
   if (!episode || !comments) notFound();
 
-  const formatter = new Intl.DateTimeFormat("ja-JP", {
-    day: "numeric",
-    month: "long",
-  });
-
   return (
     <>
       <Box m={4}>
@@ -58,7 +53,7 @@ const EpisodeShowPage = async (props: Props) => {
           <IconButton color="inherit" size="large">
             <AccountCircle />
           </IconButton>
-          <form method="POST" action={CreateComment} style={commentFormStyle}>
+          <form action={CreateComment} style={commentFormStyle}>
             <input type="hidden" value={id} name="episodeId" />
             <input type="hidden" value={loginUserProfile.id} name="userId" />
             <TextField
@@ -83,7 +78,7 @@ const EpisodeShowPage = async (props: Props) => {
                 </IconButton>
                 <Stack>
                   <Typography variant="caption">{comment.user.name}</Typography>
-                  <Typography variant="caption">{formatter.format(new Date(comment.createdAt))}</Typography>
+                  <Typography variant="caption">{comment.createdAtFormatted}</Typography>
                 </Stack>
                 <Typography sx={commentTextStyle}>{comment.description}</Typography>
               </Stack>
