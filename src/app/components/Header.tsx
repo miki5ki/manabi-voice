@@ -1,12 +1,17 @@
-import { Claims } from "@auth0/nextjs-auth0";
+import { User } from "@auth0/nextjs-auth0/types";
 import { AppBar, Avatar, Box, Button, Container, Toolbar } from "@mui/material";
+import Link from "next/link";
 import { notFound } from "next/navigation";
 
 import { getUser } from "@/features/users/actions";
 
 import { Settings } from "./Settings";
 
-export const Header = async (props: Claims) => {
+const linkStyle = {
+  textDecoration: "none",
+};
+
+export const Header = async (props: { user: User }) => {
   const { user } = props;
   const userProfile = await getUser(user.sub);
   if (!userProfile) notFound();
@@ -24,11 +29,10 @@ export const Header = async (props: Claims) => {
             <Toolbar>
               <Avatar src="/logo.png" alt="ロゴ" sx={{ height: 52, mr: 3, width: 52 }} />
               <Box>
-                {/* muiではbuttonにhrefを指定するとaタグとしてレンダリングされるためbuttonタグを使用 */}
                 {pages.map((page) => (
-                  <Button key={page.link} href={page.link} color="inherit">
-                    {page.title}
-                  </Button>
+                  <Link key={page.link} href={page.link} passHref style={linkStyle}>
+                    <Button color="inherit">{page.title}</Button>
+                  </Link>
                 ))}
               </Box>
             </Toolbar>
