@@ -1,12 +1,12 @@
 "use client";
 
-import { UserProfile } from "@auth0/nextjs-auth0/client";
 import { AccountCircle } from "@mui/icons-material";
 import { Box, IconButton, Menu, MenuItem, Tooltip, Typography } from "@mui/material";
+import { User } from "@prisma/client";
 import Link from "next/link";
 import { useState } from "react";
 
-export const Settings = (props: { userProfile: UserProfile }) => {
+export const Settings = (props: { userProfile: User }) => {
   const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
   const { id } = props.userProfile;
   const open = Boolean(anchorEl);

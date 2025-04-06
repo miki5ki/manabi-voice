@@ -1,7 +1,6 @@
 "use server";
 
-import { Session } from "@auth0/nextjs-auth0";
-import { UserProfile } from "@auth0/nextjs-auth0/client";
+import { SessionData } from "@auth0/nextjs-auth0/types";
 import { User } from "@prisma/client";
 import { cache } from "react";
 import { z } from "zod";
@@ -33,8 +32,8 @@ const DeactivateUserSchema = z.object({
   userProfileId: z.string(),
 });
 
-export async function upsertUser(session: Session) {
-  const user: UserProfile = session.user;
+export async function upsertUser(session: SessionData) {
+  const user = session.user;
 
   try {
     if (!user.email || !user.sub || !user.name) {
