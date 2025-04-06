@@ -1,4 +1,5 @@
 import { Grid2 } from "@mui/material";
+import { notFound } from "next/navigation";
 
 import { ViewAction } from "@/app/components/ViewAction";
 import { ViewCard } from "@/app/components/ViewCard";
@@ -6,6 +7,7 @@ import { getCategories } from "@/features/categories/actions";
 
 const CategoriesPage = async () => {
   const categories = await getCategories();
+  if (!categories) notFound();
 
   return (
     <>

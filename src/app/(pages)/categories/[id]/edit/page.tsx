@@ -1,3 +1,5 @@
+import { notFound } from "next/navigation";
+
 import { deleteCategory, getCategory, updateCategory } from "@/features/categories/actions";
 
 type Props = {
@@ -12,6 +14,7 @@ const CategoryEditPage = async (props: Props) => {
   const { id } = params;
 
   const category = await getCategory(id);
+  if (!category) notFound();
 
   return (
     <>

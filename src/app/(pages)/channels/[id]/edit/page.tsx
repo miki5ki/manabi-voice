@@ -1,3 +1,6 @@
+import { Category } from "@prisma/client";
+import { notFound } from "next/navigation";
+
 import { getCategories } from "@/features/categories/actions";
 import { deleteChannel, getChannel, updateChannel } from "@/features/channels/actions";
 
@@ -12,9 +15,7 @@ const ChannelEditPage = async (props: Props) => {
   const { id } = params;
   const channel = await getChannel(id);
   const categories = await getCategories();
-  if (!channel) {
-    return <p>チャンネルが見つかりませんでした</p>;
-  }
+  if (!channel || !categories) notFound();
 
   return (
     <>
@@ -23,7 +24,7 @@ const ChannelEditPage = async (props: Props) => {
         <input type="text" name="channelTitle" defaultValue={channel.title} required />
         <input type="text" name="channelDescription" defaultValue={channel.description ?? ""} />
         <select name="categoryId">
-          {categories.map((category) => (
+          {categories.map((category: Category) => (
             <option key={category.id} value={category.id}>
               {category.title}
             </option>
