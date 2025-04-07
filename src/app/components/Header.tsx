@@ -8,6 +8,7 @@ import { getUser } from "@/features/users/actions";
 import { Settings } from "./Settings";
 
 const linkStyle = {
+  color: "white",
   textDecoration: "none",
 };
 
@@ -31,7 +32,9 @@ export const Header = async (props: { user: User }) => {
               <Box>
                 {pages.map((page) => (
                   <Link key={page.link} href={page.link} passHref style={linkStyle}>
-                    <Button color="inherit">{page.title}</Button>
+                    <Button component="a" color="inherit">
+                      {page.title}
+                    </Button>
                   </Link>
                 ))}
               </Box>
