@@ -73,8 +73,7 @@ export async function getEpisode(episodeId: string) {
     });
     return res;
   } catch (e) {
-    console.error("Database Error", e);
-    return null;
+    prismaErrorHandler(e);
   }
 }
 
@@ -83,8 +82,7 @@ export async function getEpisodes() {
     const res = await prisma.episode.findMany();
     return res;
   } catch (e) {
-    console.error("Database Error", e);
-    return [];
+    prismaErrorHandler(e);
   }
 }
 
