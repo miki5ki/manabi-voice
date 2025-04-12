@@ -11,13 +11,13 @@ const buttonStyles: SxProps<Theme> = {
   width: "80%",
 };
 
-const StackStyle = {
+const StackStyle: SxProps<Theme> = {
   alignItems: "center",
   flexDirection: "row",
   gap: 1,
 };
 
-const commentTextStyle = {
+const commentTextStyle: SxProps<Theme> = {
   mx: 1,
 };
 
