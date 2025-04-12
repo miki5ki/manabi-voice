@@ -32,8 +32,8 @@ const DeactivateUserSchema = z.object({
   userProfileId: z.string(),
 });
 
-export async function upsertUser(session: SessionData) {
-  const user = session.user;
+export async function upsertUser(sessionData: SessionData) {
+  const user = sessionData.user;
 
   try {
     if (!user.email || !user.sub || !user.name) {
