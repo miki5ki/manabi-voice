@@ -25,6 +25,6 @@
 ```
   const pageItems = [
     { title: "マイページ", link: `/users/${id}` },
-    { title: "ログアウト", link: "/api/auth/logout" },
+    { title: "ログアウト", link: "/auth/logout" },
   ];
 ```
