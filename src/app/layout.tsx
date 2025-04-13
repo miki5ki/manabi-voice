@@ -14,7 +14,7 @@ export default async function RootLayout({ children }: { children: React.ReactNo
   const session = await auth0.getSession();
 
   if (!session) {
-    redirect("/api/auth/login");
+    redirect("/auth/login");
   }
 
   const { user } = session;
