@@ -32,7 +32,6 @@ export const Header = async () => {
                   </Link>
                 ))}
               </Box>
-              z
             </Toolbar>
             <Settings session={session} />
           </Box>
