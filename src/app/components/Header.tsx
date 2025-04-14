@@ -1,9 +1,7 @@
-import { User } from "@auth0/nextjs-auth0/types";
 import { AppBar, Avatar, Box, Button, Container, Toolbar } from "@mui/material";
 import Link from "next/link";
-import { notFound } from "next/navigation";
 
-import { getUser } from "@/features/users/actions";
+import { getValidSession } from "@/features/auth/actions";
 
 import { Settings } from "./Settings";
 
@@ -12,10 +10,8 @@ const linkStyle = {
   textDecoration: "none",
 };
 
-export const Header = async (props: { user: User }) => {
-  const { user } = props;
-  const userProfile = await getUser(user.sub);
-  if (!userProfile) notFound();
+export const Header = async () => {
+  const session = await getValidSession();
   const pages = [
     { title: "カテゴリー", link: "/categories" },
     { title: "チャンネル", link: "/channels" },
@@ -36,8 +32,9 @@ export const Header = async (props: { user: User }) => {
                   </Link>
                 ))}
               </Box>
+              z
             </Toolbar>
-            <Settings userProfile={userProfile} />
+            <Settings session={session} />
           </Box>
         </Container>
       </AppBar>

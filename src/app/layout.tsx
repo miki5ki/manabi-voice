@@ -1,8 +1,3 @@
-import { redirect } from "next/navigation";
-import React from "react";
-
-import { auth0 } from "@/lib/auth0";
-
 import { Header } from "./components/Header";
 import { Providers } from "./providers";
 export const metadata = {
@@ -11,19 +6,11 @@ export const metadata = {
 };
 
 export default async function RootLayout({ children }: { children: React.ReactNode }) {
-  const session = await auth0.getSession();
-
-  if (!session) {
-    redirect("/auth/login");
-  }
-
-  const { user } = session;
-
   return (
     <html lang="ja">
       <body>
         <Providers>
-          <Header user={user} />
+          <Header />
           <main>{children}</main>
         </Providers>
       </body>

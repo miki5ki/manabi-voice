@@ -2,13 +2,13 @@
 
 import { useState } from "react";
 
-import { deactivateUser } from "@/features/users/actions";
+import { deactivateAppUser } from "@/features/users/actions";
 
 type Props = {
   deactivateInfo: {
+    appUserId: string;
     loginUserId: string;
     loginUserRole: string;
-    userProfileId: string;
   };
 };
 
@@ -19,10 +19,10 @@ export const DeactivateButton = (props: Props) => {
   const handleDeactivate = async () => {
     setIsProcessing(true);
     try {
-      await deactivateUser({
+      await deactivateAppUser({
         loginUserId: deactivateInfo.loginUserId, // ログインユーザーID
         loginUserRole: deactivateInfo.loginUserRole, // ログインユーザーのロール
-        userProfileId: deactivateInfo.userProfileId, // 退会処理対象ユーザーID
+        userProfileId: deactivateInfo.appUserId, // 退会処理対象ユーザーID
       });
     } catch (error) {
       console.error("Error deactivating user", error);
