@@ -1,21 +1,19 @@
 import { Auth0Client } from "@auth0/nextjs-auth0/server";
-import { NextResponse } from "next/server";
 
-import { upsertUser } from "@/features/users/actions";
+import { upsertAppUser } from "@/features/users/actions";
 
 export const auth0 = new Auth0Client({
-  async onCallback(error, context, session) {
-    // redirect the user to a custom error page
-    if (error || !session?.user) {
-      return NextResponse.redirect(
-        new URL(`/error?error=${error?.message || "unknown error"}`, process.env.APP_BASE_URL),
-      );
+  async beforeSessionSaved(session) {
+    const appUser = await upsertAppUser(session);
+    if (!appUser) {
+      throw new Error("ログイン処理に失敗しました。再度お試しください。");
     }
-
-    // 他のカスタマイズログインロジック
-    await upsertUser(session);
-
-    // complete the redirect to the provided returnTo URL
-    return NextResponse.redirect(new URL(context.returnTo || "/", process.env.APP_BASE_URL));
+    return {
+      ...session,
+      user: {
+        ...session.user,
+        appUserId: appUser.id,
+      },
+    };
   },
 });

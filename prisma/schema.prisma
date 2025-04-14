@@ -26,6 +26,7 @@ model Channel {
   id String @id @default(uuid())
   title String  @unique
   description String?
+  episodes Episode[]
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt @default(now())
 }
@@ -38,6 +39,8 @@ model Episode {
   userId String
   audioId String @unique
   audio Audio @relation(fields: [audioId], references: [id])
+  channelId String
+  channel Channel @relation(fields: [channelId], references: [id])
   comments Comments[] 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt @default(now())

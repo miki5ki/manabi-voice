@@ -3,7 +3,7 @@ import { Box, Button, IconButton, Stack, SxProps, TextField, Theme, Typography }
 import { notFound } from "next/navigation";
 
 import { WideCard } from "@/app/components/WideCard";
-import { getAuth0User } from "@/features/auth/actions";
+import { getValidSession } from "@/features/auth/actions";
 import { CreateComment, getComments } from "@/features/comments/actions";
 import { getEpisode } from "@/features/episodes/actions";
 
@@ -34,8 +34,7 @@ type Props = {
   searchParams: object;
 };
 const EpisodeShowPage = async (props: Props) => {
-  const loginUserProfile = await getAuth0User(true);
-  if (!loginUserProfile) notFound();
+  const session = await getValidSession();
   const { params } = props;
   const { id } = params;
   const episode = await getEpisode(id);
@@ -55,7 +54,7 @@ const EpisodeShowPage = async (props: Props) => {
           </IconButton>
           <form action={CreateComment} style={commentFormStyle}>
             <input type="hidden" value={id} name="episodeId" />
-            <input type="hidden" value={loginUserProfile.id} name="userId" />
+            <input hidden name="userId" defaultValue={session.user.appUserId} />
             <TextField
               label="コメント"
               variant="outlined"

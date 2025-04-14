@@ -32,7 +32,7 @@ const DeactivateUserSchema = z.object({
   userProfileId: z.string(),
 });
 
-export async function upsertUser(sessionData: SessionData) {
+export async function upsertAppUser(sessionData: SessionData) {
   const user = sessionData.user;
 
   try {
@@ -69,7 +69,7 @@ export async function upsertUser(sessionData: SessionData) {
   }
 }
 
-export const updateUser = async (formData: FormData) => {
+export const updateAppUser = async (formData: FormData) => {
   const validUser = validateSchema(UpdateUserSchema, {
     id: formData.get("userId"),
     name: formData.get("userName"),
@@ -91,20 +91,20 @@ export const updateUser = async (formData: FormData) => {
   }
 };
 
-export const getUser = cache(async (auth0Id: string): Promise<User | null> => {
+export const getAppUser = cache(async (id: string): Promise<User | null> => {
   try {
-    const userProfile = await prisma.user.findUnique({
-      where: { auth0Id },
+    const appUser = await prisma.user.findUnique({
+      where: { id },
     });
 
-    return userProfile;
+    return appUser;
   } catch (e) {
     console.error("DatabaseError", e);
     return null;
   }
 });
 
-export const getUsers = async (role: string) => {
+export const getAppUsers = async (role: string) => {
   if (role == "user") {
     return;
   }
@@ -118,7 +118,7 @@ export const getUsers = async (role: string) => {
   }
 };
 
-export const deactivateUser = async (deactivateInfo: DeactivateUserInfo) => {
+export const deactivateAppUser = async (deactivateInfo: DeactivateUserInfo) => {
   const validUser = validateSchema(DeactivateUserSchema, {
     loginUserId: deactivateInfo.loginUserId,
     loginUserRole: deactivateInfo.loginUserRole,

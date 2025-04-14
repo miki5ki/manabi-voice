@@ -1,11 +1,14 @@
+import { getValidSession } from "@/features/auth/actions";
 import { getCategories } from "@/features/categories/actions";
 import { createChannel } from "@/features/channels/actions";
 
 const ChannelCreatePage = async () => {
   const categories = await getCategories();
+  const session = await getValidSession();
   return (
     <>
       <form action={createChannel}>
+        <input hidden name="userId" defaultValue={session.user.appUserId} />
         <input type="text" name="channelTitle" placeholder="チャンネルタイトル" required />
         <input type="text" name="channelDescription" placeholder="チャンネル詳細" />
         <select name="categoryId">
@@ -20,5 +23,4 @@ const ChannelCreatePage = async () => {
     </>
   );
 };
-
 export default ChannelCreatePage;
