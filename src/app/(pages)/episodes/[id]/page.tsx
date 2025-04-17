@@ -54,7 +54,7 @@ const EpisodeShowPage = async (props: Props) => {
           </IconButton>
           <form action={CreateComment} style={commentFormStyle}>
             <input type="hidden" value={id} name="episodeId" />
-            <input hidden name="userId" defaultValue={session.user.appUserId} />
+            <input hidden name="appUserId" defaultValue={session.user.appUserId} />
             <TextField
               label="コメント"
               variant="outlined"
