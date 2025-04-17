@@ -1,15 +1,25 @@
+import { getValidSession } from "@/features/auth/actions";
 import { getCategories } from "@/features/categories/actions";
+import { getChannels } from "@/features/channels/actions";
 import { createEpisode } from "@/features/episodes/actions";
 
 const EpisodeCreatePage = async () => {
   const categories = await getCategories();
+  const session = await getValidSession();
+  const channels = await getChannels();
   return (
     <>
-      <form method="POST" action={createEpisode}>
-        <input hidden name="userId" defaultValue="8167baf4-b514-4f8e-9a43-d81bf9a8a305" />
-        <input hidden name="audioId" defaultValue="de85b69f-1264-4cb5-8b2b-56bea67c144b" />
+      <form action={createEpisode}>
+        <input hidden name="appUserId" defaultValue={session.user.appUserId} />
         <input name="episodeTitle" type="text" />
         <input name="episodeContent" type="text" />
+        <select name="channelId">
+          {channels.map((channel) => (
+            <option key={channel.id} value={channel.id}>
+              {channel.title}
+            </option>
+          ))}
+        </select>
         <select name="categoryId">
           {categories.map((category) => (
             <option key={category.id} value={category.id}>
