@@ -9,26 +9,26 @@ import { validateSchema } from "@/lib/validation";
 
 const CommentSchema = z.object({
   id: z.string(),
+  appUserId: z.string(),
   description: z.string(),
   episodeId: z.string(),
-  userId: z.string(),
 });
 
 const CreateCommentSchema = CommentSchema.omit({ id: true });
 
 export async function CreateComment(formData: FormData) {
   const validComment = validateSchema(CreateCommentSchema, {
+    appUserId: formData.get("appUserId"),
     description: formData.get("description"),
     episodeId: formData.get("episodeId"),
-    userId: formData.get("userId"),
   });
 
   try {
     await prisma.comments.create({
       data: {
+        appUserId: validComment.appUserId,
         description: validComment.description,
         episodeId: validComment.episodeId,
-        userId: validComment.userId,
       },
     });
   } catch (e) {
