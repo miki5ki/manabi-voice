@@ -11,42 +11,58 @@ import { validateSchema } from "@/lib/validation";
 const EpisodeSchema = z.object({
   id: z.string(),
   title: z.string(),
+  appUserId: z.string(),
   audioId: z.string(),
   categoryId: z.string(),
+  channelId: z.string(),
   content: z.string(),
-  userId: z.string(),
 });
 
 const CreateEpisodeSchema = EpisodeSchema.omit({ id: true });
 
 const DeleteEpisodeSchema = EpisodeSchema.omit({
   title: true,
+  appUserId: true,
   audioId: true,
   categoryId: true,
   content: true,
-  userId: true,
 });
-export async function createEpisode(formData: FormData) {
-  const validEpisode = validateSchema(CreateEpisodeSchema, {
-    title: formData.get("episodeTitle"),
-    audioId: formData.get("audioId"),
-    categoryId: formData.get("categoryId"),
-    content: formData.get("episodeContent"),
-    userId: formData.get("userId"),
-  });
 
+type GetEpisodesParams = {
+  channelId?: string;
+};
+
+export async function createEpisode(formData: FormData) {
   try {
     await prisma.$transaction(async (prisma) => {
-      const res = await prisma.episode.create({
+      const randomString = () => Math.random().toString(36).substring(2);
+
+      const audio = await prisma.audio.create({
         data: {
-          title: validEpisode.title,
-          audioId: validEpisode.audioId,
-          content: validEpisode.content,
-          userId: validEpisode.userId,
+          filePath: randomString(),
         },
       });
 
-      const episodeId = res.id;
+      const validEpisode = validateSchema(CreateEpisodeSchema, {
+        title: formData.get("episodeTitle"),
+        appUserId: formData.get("appUserId"),
+        audioId: audio.id,
+        categoryId: formData.get("categoryId"),
+        channelId: formData.get("channelId"),
+        content: formData.get("episodeContent"),
+      });
+
+      const episode = await prisma.episode.create({
+        data: {
+          title: validEpisode.title,
+          appUserId: validEpisode.appUserId,
+          audioId: validEpisode.audioId,
+          channelId: validEpisode.channelId,
+          content: validEpisode.content,
+        },
+      });
+
+      const episodeId = episode.id;
       const categoryId = validEpisode.categoryId;
 
       await prisma.episodesCategoriesRelations.create({
@@ -71,15 +87,22 @@ export async function getEpisode(episodeId: string) {
         id: episodeId,
       },
     });
+
     return res;
   } catch (e) {
     prismaErrorHandler(e);
   }
 }
 
-export async function getEpisodes() {
+export async function getEpisodes(params: GetEpisodesParams = {}) {
   try {
-    const res = await prisma.episode.findMany();
+    const res = await prisma.episode.findMany({
+      where: {
+        // const where = params.channelId ? { validChannel: params.channelId } : {};の三項演算子と同じ意味。
+        ...(params.channelId && { channelId: params.channelId }),
+      },
+    });
+
     return res;
   } catch (e) {
     prismaErrorHandler(e);
@@ -90,10 +113,11 @@ export async function updateEpisode(formData: FormData) {
   const validEpisode = validateSchema(EpisodeSchema, {
     id: formData.get("episodeId"),
     title: formData.get("episodeTitle"),
+    appUserId: formData.get("appUserId"),
     audioId: formData.get("audioId"),
     categoryId: formData.get("categoryId"),
+    channelId: formData.get("channelId"),
     content: formData.get("episodeContent"),
-    userId: formData.get("userId"),
   });
 
   try {
@@ -101,9 +125,9 @@ export async function updateEpisode(formData: FormData) {
       await prisma.episode.update({
         data: {
           title: validEpisode.title,
+          appUserId: validEpisode.appUserId,
           audioId: validEpisode.audioId,
           content: validEpisode.content,
-          userId: validEpisode.userId,
         },
         where: { id: validEpisode.id },
       });
