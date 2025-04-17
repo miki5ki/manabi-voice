@@ -12,16 +12,22 @@ import { validateSchema } from "@/lib/validation";
 const ChannelSchema = z.object({
   id: z.string(),
   title: z.string(),
+  appUserId: z.string(),
   categoryId: z.string(),
-  description: z.string(),
+  description: z.string().nullable(),
 });
 
 const CreateChannelSchema = ChannelSchema.omit({ id: true });
 const DeleteChannelSchema = ChannelSchema.omit({ title: true, categoryId: true, description: true });
 
+type GetChannelsParams = {
+  appUserId?: string;
+};
+
 export async function createChannel(formData: FormData) {
   const validChannel = validateSchema(CreateChannelSchema, {
     title: formData.get("channelTitle"),
+    appUserId: formData.get("appUserId"),
     categoryId: formData.get("categoryId"),
     description: formData.get("channelDescription"),
   });
@@ -31,6 +37,7 @@ export async function createChannel(formData: FormData) {
       const res = await prisma.channel.create({
         data: {
           title: validChannel.title,
+          appUserId: validChannel.appUserId,
           description: validChannel.description,
         },
       });
@@ -52,9 +59,14 @@ export async function createChannel(formData: FormData) {
   redirect("/channels");
 }
 
-export async function getChannels(): Promise<Channel[]> {
+export async function getChannels(params: GetChannelsParams = {}) {
   try {
-    const res = await prisma.channel.findMany();
+    const res = await prisma.channel.findMany({
+      where: {
+        // const where = params.appUserId ? { validChannel: params.appUserId } : {};の三項演算子と同じ意味。
+        ...(params.appUserId && { appUserId: params.appUserId }),
+      },
+    });
     return res;
   } catch (e) {
     console.error("Database Error", e);
@@ -83,6 +95,7 @@ export async function updateChannel(formData: FormData) {
     title: formData.get("channelTitle"),
     categoryId: formData.get("categoryId"),
     description: formData.get("channelDescription"),
+    userId: formData.get("appUserId"),
   });
 
   try {

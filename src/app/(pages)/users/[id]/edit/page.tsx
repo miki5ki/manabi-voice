@@ -13,7 +13,7 @@ const page = async () => {
   return (
     <>
       <form method="POST" action={updateAppUser}>
-        <input name="userId" hidden defaultValue={appUser.id} />
+        <input name="appUserId" hidden defaultValue={appUser.id} />
         <input type="text" name="userName" required defaultValue={appUser.name} />
         <input type="text" name="userEmail" required defaultValue={appUser.email} />
         <button>更新</button>

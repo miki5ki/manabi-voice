@@ -8,7 +8,7 @@ const ChannelCreatePage = async () => {
   return (
     <>
       <form action={createChannel}>
-        <input hidden name="userId" defaultValue={session.user.appUserId} />
+        <input hidden name="appUserId" defaultValue={session.user.appUserId} />
         <input type="text" name="channelTitle" placeholder="チャンネルタイトル" required />
         <input type="text" name="channelDescription" placeholder="チャンネル詳細" />
         <select name="categoryId">
