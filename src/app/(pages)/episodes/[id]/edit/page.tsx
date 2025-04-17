@@ -25,7 +25,7 @@ const EpisodeEditPage = async (props: Props) => {
         <input hidden name="episodeId" value={id} />
         <input hidden name="appUserId" defaultValue={session.user.appUserId} />
         <input name="episodeTitle" type="input" defaultValue={episode.title} />
-        <input name="episodeContent" type="input" defaultValue={episode.content} />
+        <input name="episodeDescription" type="input" defaultValue={episode.description} />
         <select name="categoryId">
           {categories.map((category) => (
             <option key={category.id} value={category.id}>

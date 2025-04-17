@@ -2,8 +2,9 @@ import { Card, CardActionArea, CardContent, CardHeader, CardMedia, Grid2, Typogr
 
 import { CategoryCardProps } from "../(pages)/categories/types/categoriesTypes";
 import { ChannelCardProps } from "../(pages)/channels/types/categoriesTypes";
+import { EpisodeCardProps } from "../(pages)/episodes/types/categoryTypes";
 
-export const ViewCard = (props: CategoryCardProps | ChannelCardProps) => {
+export const ViewCard = (props: CategoryCardProps | ChannelCardProps | EpisodeCardProps) => {
   const { id, title, description, viewType } = props;
   return (
     <>

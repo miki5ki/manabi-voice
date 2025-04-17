@@ -28,7 +28,7 @@ const typographyStyle: SxProps<Theme> = {
 };
 
 export const WideCard = (props: Episode) => {
-  const { title, content } = props;
+  const { title, description } = props;
   return (
     <Card sx={cardStyle}>
       <CardHeader
@@ -44,7 +44,7 @@ export const WideCard = (props: Episode) => {
       <CardContent sx={cardContentStyle}>
         <Typography variant="subtitle1">{title}</Typography>
         <Typography variant="body1" sx={typographyStyle}>
-          {content}
+          {description}
         </Typography>
         <SoundPlayer />
       </CardContent>

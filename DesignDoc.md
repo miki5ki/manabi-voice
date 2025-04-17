@@ -141,7 +141,7 @@ erDiagram
   Episodes {
     bigint id PK
     string title "エピソードのタイトル"
-    text content "エピソード内容"
+    text description "エピソード内容"
     references audios FK
     string audioId
     references users FK
