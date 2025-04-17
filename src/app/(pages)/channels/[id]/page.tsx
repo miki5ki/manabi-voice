@@ -17,9 +17,8 @@ const ChannelShowPage = async (props: Props) => {
   const { params } = props;
   const { id } = params;
   const channel = await getChannel(id);
-  const episodes = await getEpisodes();
   if (!channel) notFound();
-
+  const episodes = await getEpisodes({ channelId: id });
   return (
     <>
       <Box>
@@ -29,9 +28,13 @@ const ChannelShowPage = async (props: Props) => {
       <Box>
         <Typography variant="h6">エピソード一覧</Typography>
         <Stack spacing={5} mx={4}>
-          {episodes.map((episode: Episode) => (
-            <WideCard key={episode.id} {...episode} />
-          ))}
+          {episodes ? (
+            episodes.map((episode: Episode) => <WideCard key={episode.id} {...episode} />)
+          ) : (
+            <Box>
+              <Typography variant="h6">関連するエピソードはありません</Typography>
+            </Box>
+          )}
         </Stack>
       </Box>
     </>
