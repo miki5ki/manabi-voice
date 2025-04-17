@@ -15,7 +15,7 @@ const EpisodeSchema = z.object({
   audioId: z.string(),
   categoryId: z.string(),
   channelId: z.string(),
-  content: z.string(),
+  description: z.string(),
 });
 
 const CreateEpisodeSchema = EpisodeSchema.omit({ id: true });
@@ -25,7 +25,7 @@ const DeleteEpisodeSchema = EpisodeSchema.omit({
   appUserId: true,
   audioId: true,
   categoryId: true,
-  content: true,
+  description: true,
 });
 
 type GetEpisodesParams = {
@@ -49,7 +49,7 @@ export async function createEpisode(formData: FormData) {
         audioId: audio.id,
         categoryId: formData.get("categoryId"),
         channelId: formData.get("channelId"),
-        content: formData.get("episodeContent"),
+        description: formData.get("episodeDescription"),
       });
 
       const episode = await prisma.episode.create({
@@ -58,7 +58,7 @@ export async function createEpisode(formData: FormData) {
           appUserId: validEpisode.appUserId,
           audioId: validEpisode.audioId,
           channelId: validEpisode.channelId,
-          content: validEpisode.content,
+          description: validEpisode.description,
         },
       });
 
@@ -117,7 +117,7 @@ export async function updateEpisode(formData: FormData) {
     audioId: formData.get("audioId"),
     categoryId: formData.get("categoryId"),
     channelId: formData.get("channelId"),
-    content: formData.get("episodeContent"),
+    description: formData.get("episodeDescription"),
   });
 
   try {
@@ -127,7 +127,7 @@ export async function updateEpisode(formData: FormData) {
           title: validEpisode.title,
           appUserId: validEpisode.appUserId,
           audioId: validEpisode.audioId,
-          content: validEpisode.content,
+          description: validEpisode.description,
         },
         where: { id: validEpisode.id },
       });

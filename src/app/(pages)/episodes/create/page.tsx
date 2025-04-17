@@ -12,7 +12,7 @@ const EpisodeCreatePage = async () => {
       <form action={createEpisode}>
         <input hidden name="appUserId" defaultValue={session.user.appUserId} />
         <input name="episodeTitle" type="text" />
-        <input name="episodeContent" type="text" />
+        <input name="episodeDescription" type="text" />
         <select name="channelId">
           {channels.map((channel) => (
             <option key={channel.id} value={channel.id}>
