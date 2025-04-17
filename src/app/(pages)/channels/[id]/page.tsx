@@ -1,5 +1,6 @@
 import { Avatar, Box, Grid2, Stack, SxProps, Theme, Typography } from "@mui/material";
 import { Episode } from "@prisma/client";
+import Link from "next/link";
 import { notFound } from "next/navigation";
 
 import { WideCard } from "@/app/components/WideCard";
@@ -24,6 +25,10 @@ const gridStyle: SxProps<Theme> = {
   display: "flex",
   flexDirection: "row",
   margin: 3,
+};
+
+const linkStyle = {
+  textDecoration: "none",
 };
 
 const ChannelShowPage = async (props: Props) => {
@@ -51,7 +56,11 @@ const ChannelShowPage = async (props: Props) => {
         </Typography>
         <Stack spacing={5} mx={4}>
           {episodes ? (
-            episodes.map((episode: Episode) => <WideCard key={episode.id} {...episode} />)
+            episodes.map((episode: Episode) => (
+              <Link key={episode.id} href={`/episodes/${episode.id}`} passHref style={linkStyle}>
+                <WideCard {...episode} />
+              </Link>
+            ))
           ) : (
             <Box>
               <Typography variant="h6">関連するエピソードはありません</Typography>
