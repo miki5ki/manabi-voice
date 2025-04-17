@@ -10,7 +10,6 @@ const ChannelsPage = async () => {
   return (
     <>
       <ViewAction viewType="channels" />
-
       <Grid2 container spacing={2} m={3}>
         {channels.map((channel) => (
           <ViewCard {...channel} viewType="channels" key={channel.id} />

@@ -8,7 +8,7 @@ export const ViewCard = (props: CategoryCardProps | ChannelCardProps) => {
   return (
     <>
       <Grid2 size={{ lg: 3, md: 4, xs: 6 }}>
-        <Card>
+        <Card sx={{ height: "100%" }}>
           <CardActionArea href={`${viewType}/${id}`}>
             <CardHeader title={title} />
             <CardMedia
