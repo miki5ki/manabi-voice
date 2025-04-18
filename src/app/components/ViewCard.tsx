@@ -1,4 +1,4 @@
-import { Card, CardActionArea, CardContent, CardHeader, CardMedia, Grid2, Typography } from "@mui/material";
+import { Card, CardActionArea, CardContent, CardMedia, Grid2, Typography } from "@mui/material";
 
 import { CategoryCardProps } from "../(pages)/categories/types/categoriesTypes";
 import { ChannelCardProps } from "../(pages)/channels/types/categoriesTypes";
@@ -11,7 +11,11 @@ export const ViewCard = (props: CategoryCardProps | ChannelCardProps | EpisodeCa
       <Grid2 size={{ lg: 3, md: 4, xs: 6 }}>
         <Card sx={{ height: "100%" }}>
           <CardActionArea href={`${viewType}/${id}`}>
-            <CardHeader title={title} />
+            <CardContent>
+              <Typography variant="subtitle1" fontWeight={"bold"}>
+                {title}
+              </Typography>
+            </CardContent>
             <CardMedia
               component="img"
               alt={`${viewType}の画像`}
