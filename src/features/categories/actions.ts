@@ -9,6 +9,9 @@ import { prisma } from "@/lib/prisma";
 import { prismaErrorHandler } from "@/lib/prismaErrorHandler";
 import { validateSchema } from "@/lib/validation";
 
+type GetCategoriesParams = {
+  keyWord?: string;
+};
 const CategorySchema = z.object({
   id: z.string(),
   title: z.string(),
@@ -47,9 +50,13 @@ export async function getCategory(categoryId: string): Promise<Category | null> 
   }
 }
 
-export async function getCategories(): Promise<Category[]> {
+export async function getCategories(params: GetCategoriesParams): Promise<Category[]> {
   try {
-    const res = await prisma.category.findMany();
+    const res = await prisma.category.findMany({
+      where: {
+        ...(params.keyWord && { title: { contains: params.keyWord } }),
+      },
+    });
     return res;
   } catch (e) {
     console.error("Database Error", e);
