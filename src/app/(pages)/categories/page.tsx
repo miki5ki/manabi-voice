@@ -5,8 +5,10 @@ import { ViewAction } from "@/app/components/ViewAction";
 import { ViewCard } from "@/app/components/ViewCard";
 import { getCategories } from "@/features/categories/actions";
 
-const CategoriesPage = async () => {
-  const categories = await getCategories();
+const CategoriesPage = async ({ searchParams }: { searchParams: { keyWord?: string } }) => {
+  const keyWord = searchParams.keyWord ?? "";
+  const categories = await getCategories({ keyWord: keyWord });
+
   if (!categories) notFound();
 
   return (
