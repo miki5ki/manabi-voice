@@ -4,8 +4,9 @@ import { ViewAction } from "@/app/components/ViewAction";
 import { ViewCard } from "@/app/components/ViewCard";
 import { getChannels } from "@/features/channels/actions";
 
-const ChannelsPage = async () => {
-  const channels = await getChannels();
+const ChannelsPage = async ({ searchParams }: { searchParams: { keyWord: string } }) => {
+  const keyWord = searchParams.keyWord ?? "";
+  const channels = await getChannels({ keyWord: keyWord });
 
   return (
     <>
