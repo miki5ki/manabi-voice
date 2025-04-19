@@ -1,7 +1,6 @@
 "use server";
 
 import { SessionData } from "@auth0/nextjs-auth0/types";
-import { User } from "@prisma/client";
 import { cache } from "react";
 import { z } from "zod";
 
@@ -62,7 +61,8 @@ export async function upsertAppUser(sessionData: SessionData) {
       }
       return res;
     } catch (e) {
-      return prismaErrorHandler(e);
+      // handler内のthrowで終了する関数なので return 不要
+      prismaErrorHandler(e);
     }
   } catch (e) {
     console.error("Database Error", e);
@@ -87,11 +87,12 @@ export const updateAppUser = async (formData: FormData) => {
       },
     });
   } catch (e) {
-    return prismaErrorHandler(e);
+    // handler内のthrowで終了する関数なので return 不要
+    prismaErrorHandler(e);
   }
 };
 
-export const getAppUser = cache(async (id: string): Promise<User | null> => {
+export const getAppUser = cache(async (id: string) => {
   try {
     const appUser = await prisma.user.findUnique({
       where: { id },
@@ -99,8 +100,8 @@ export const getAppUser = cache(async (id: string): Promise<User | null> => {
 
     return appUser;
   } catch (e) {
-    console.error("DatabaseError", e);
-    return null;
+    // handler内のthrowで終了する関数なので return 不要
+    prismaErrorHandler(e);
   }
 });
 
@@ -113,8 +114,8 @@ export const getAppUsers = async (role: string) => {
 
     return allUsers;
   } catch (e) {
-    console.error("DatabaseError", e);
-    return [];
+    // handler内のthrowで終了する関数なので return 不要
+    prismaErrorHandler(e);
   }
 };
 
@@ -137,6 +138,7 @@ export const deactivateAppUser = async (deactivateInfo: DeactivateUserInfo) => {
       });
     }
   } catch (e) {
-    return prismaErrorHandler(e);
+    // handler内のthrowで終了する関数なので return 不要
+    prismaErrorHandler(e);
   }
 };

@@ -73,7 +73,8 @@ export async function createEpisode(formData: FormData) {
       });
     });
   } catch (e) {
-    return prismaErrorHandler(e);
+    // handler内のthrowで終了する関数なので return 不要
+    prismaErrorHandler(e);
   }
 
   revalidatePath("/episodes");
@@ -147,7 +148,8 @@ export async function updateEpisode(formData: FormData) {
       });
     });
   } catch (e) {
-    return prismaErrorHandler(e);
+    // handler内のthrowで終了する関数なので return 不要
+    prismaErrorHandler(e);
   }
   revalidatePath("/episodes");
   redirect("/episodes");
@@ -173,7 +175,8 @@ export async function deleteEpisode(formData: FormData) {
       });
     });
   } catch (e) {
-    return prismaErrorHandler(e);
+    // handler内のthrowで終了する関数なので return 不要
+    prismaErrorHandler(e);
   }
   revalidatePath("/episodes");
   redirect("/episodes");

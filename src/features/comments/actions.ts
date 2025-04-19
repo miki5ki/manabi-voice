@@ -32,7 +32,8 @@ export async function CreateComment(formData: FormData) {
       },
     });
   } catch (e) {
-    return prismaErrorHandler(e);
+    // handler内のthrowで終了する関数なので return 不要
+    prismaErrorHandler(e);
   }
   revalidatePath(`/episodes${validComment.episodeId}`);
 }
@@ -61,6 +62,7 @@ export async function getComments(episodeId: string) {
 
     return formattedComments;
   } catch (e) {
-    console.error("Database Error:", e);
+    // handler内のthrowで終了する関数なので return 不要
+    prismaErrorHandler(e);
   }
 }
