@@ -21,6 +21,7 @@ const DeleteChannelSchema = ChannelSchema.omit({ title: true, categoryId: true, 
 
 type GetChannelsParams = {
   appUserId?: string;
+  keyWord?: string;
 };
 
 export async function createChannel(formData: FormData) {
@@ -63,8 +64,8 @@ export async function getChannels(params: GetChannelsParams = {}) {
   try {
     const res = await prisma.channel.findMany({
       where: {
-        // const where = params.appUserId ? { validChannel: params.appUserId } : {};の三項演算子と同じ意味。
         ...(params.appUserId && { appUserId: params.appUserId }),
+        ...(params.keyWord && { title: { contains: params.keyWord } }),
       },
     });
     return res;
