@@ -30,6 +30,7 @@ const DeleteEpisodeSchema = EpisodeSchema.omit({
 
 type GetEpisodesParams = {
   channelId?: string;
+  keyWord?: string;
 };
 
 export async function createEpisode(formData: FormData) {
@@ -98,8 +99,8 @@ export async function getEpisodes(params: GetEpisodesParams = {}) {
   try {
     const res = await prisma.episode.findMany({
       where: {
-        // const where = params.channelId ? { validChannel: params.channelId } : {};の三項演算子と同じ意味。
         ...(params.channelId && { channelId: params.channelId }),
+        ...(params.keyWord && { title: { contains: params.keyWord } }),
       },
     });
 
