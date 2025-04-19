@@ -22,7 +22,8 @@ export async function getChannelsByCategory(categoryId: string) {
     );
     return channels;
   } catch (e) {
-    return prismaErrorHandler(e);
+    // handler内のthrowで終了する関数なので return 不要
+    prismaErrorHandler(e);
   }
 }
 
@@ -45,6 +46,7 @@ export async function getEpisodesByCategory(categoryId: string) {
     );
     return episodes;
   } catch (e) {
-    return prismaErrorHandler(e);
+    // handler内のthrowで終了する関数なので return 不要
+    prismaErrorHandler(e);
   }
 }

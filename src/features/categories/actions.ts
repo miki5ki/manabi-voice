@@ -1,6 +1,5 @@
 "use server";
 
-import { Category } from "@prisma/client";
 import { revalidatePath } from "next/cache";
 import { redirect } from "next/navigation";
 import { z } from "zod";
@@ -30,13 +29,14 @@ export async function createCategory(formData: FormData) {
       },
     });
   } catch (e) {
-    return prismaErrorHandler(e);
+    // handler内のthrowで終了する関数なので return 不要
+    prismaErrorHandler(e);
   }
   revalidatePath("/categories");
   redirect("/categories");
 }
 
-export async function getCategory(categoryId: string): Promise<Category | null> {
+export async function getCategory(categoryId: string) {
   try {
     const res = await prisma.category.findUnique({
       where: {
@@ -45,12 +45,12 @@ export async function getCategory(categoryId: string): Promise<Category | null> 
     });
     return res;
   } catch (e) {
-    console.error("Database Error", e);
-    return null;
+    // handler内のthrowで終了する関数なので return 不要
+    prismaErrorHandler(e);
   }
 }
 
-export async function getCategories(params: GetCategoriesParams): Promise<Category[]> {
+export async function getCategories(params: GetCategoriesParams) {
   try {
     const res = await prisma.category.findMany({
       where: {
@@ -59,8 +59,8 @@ export async function getCategories(params: GetCategoriesParams): Promise<Catego
     });
     return res;
   } catch (e) {
-    console.error("Database Error", e);
-    return [];
+    // handler内のthrowで終了する関数なので return 不要
+    prismaErrorHandler(e);
   }
 }
 
@@ -80,7 +80,8 @@ export async function updateCategory(formData: FormData) {
       },
     });
   } catch (e) {
-    return prismaErrorHandler(e);
+    // handler内のthrowで終了する関数なので return 不要
+    prismaErrorHandler(e);
   }
 
   revalidatePath("/categories");
@@ -99,7 +100,8 @@ export async function deleteCategory(formData: FormData) {
       },
     });
   } catch (e) {
-    return prismaErrorHandler(e);
+    // handler内のthrowで終了する関数なので return 不要
+    prismaErrorHandler(e);
   }
 
   revalidatePath("/categories");

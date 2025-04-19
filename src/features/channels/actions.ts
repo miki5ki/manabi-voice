@@ -1,6 +1,5 @@
 "use server";
 
-import { Channel } from "@prisma/client";
 import { revalidatePath } from "next/cache";
 import { redirect } from "next/navigation";
 import { z } from "zod";
@@ -53,7 +52,8 @@ export async function createChannel(formData: FormData) {
       });
     });
   } catch (e) {
-    return prismaErrorHandler(e);
+    // handler内のthrowで終了する関数なので return 不要
+    prismaErrorHandler(e);
   }
   revalidatePath("/channels");
   redirect("/channels");
@@ -69,12 +69,12 @@ export async function getChannels(params: GetChannelsParams = {}) {
     });
     return res;
   } catch (e) {
-    console.error("Database Error", e);
-    return [];
+    // handler内のthrowで終了する関数なので return 不要
+    prismaErrorHandler(e);
   }
 }
 
-export async function getChannel(channelId: string): Promise<Channel | null> {
+export async function getChannel(channelId: string) {
   try {
     const res = await prisma.channel.findUnique({
       where: {
@@ -84,8 +84,8 @@ export async function getChannel(channelId: string): Promise<Channel | null> {
 
     return res;
   } catch (e) {
-    console.error("Database Error:", e);
-    return null;
+    // handler内のthrowで終了する関数なので return 不要
+    prismaErrorHandler(e);
   }
 }
 
@@ -120,7 +120,8 @@ export async function updateChannel(formData: FormData) {
       });
     });
   } catch (e) {
-    return prismaErrorHandler(e);
+    // handler内のthrowで終了する関数なので return 不要
+    prismaErrorHandler(e);
   }
   revalidatePath("/channels");
   redirect("/channels");
@@ -148,7 +149,8 @@ export async function deleteChannel(formData: FormData) {
       });
     });
   } catch (e) {
-    return prismaErrorHandler(e);
+    // handler内のthrowで終了する関数なので return 不要
+    prismaErrorHandler(e);
   }
   revalidatePath("/channels");
   redirect("/channels");
