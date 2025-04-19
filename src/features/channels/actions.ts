@@ -64,8 +64,8 @@ export async function getChannels(params: GetChannelsParams = {}) {
   try {
     const res = await prisma.channel.findMany({
       where: {
-        ...(params.appUserId && { appUserId: params.appUserId }),
-        ...(params.keyWord && { title: { contains: params.keyWord } }),
+        ...(params.appUserId ? { title: { contains: params.appUserId } } : {}),
+        ...(params.keyWord ? { title: { contains: params.keyWord } } : {}),
       },
     });
     return res;

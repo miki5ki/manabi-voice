@@ -100,8 +100,8 @@ export async function getEpisodes(params: GetEpisodesParams = {}) {
   try {
     const res = await prisma.episode.findMany({
       where: {
-        ...(params.channelId && { channelId: params.channelId }),
-        ...(params.keyWord && { title: { contains: params.keyWord } }),
+        ...(params.channelId ? { title: { contains: params.channelId } } : {}),
+        ...(params.keyWord ? { title: { contains: params.keyWord } } : {}),
       },
     });
 

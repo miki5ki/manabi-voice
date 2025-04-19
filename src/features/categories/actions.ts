@@ -54,7 +54,7 @@ export async function getCategories(params: GetCategoriesParams) {
   try {
     const res = await prisma.category.findMany({
       where: {
-        ...(params.keyWord && { title: { contains: params.keyWord } }),
+        ...(params.keyWord ? { title: { contains: params.keyWord } } : {}),
       },
     });
     return res;
