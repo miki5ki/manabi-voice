@@ -1,9 +1,16 @@
 import { AccountCircle } from "@mui/icons-material";
-import { Avatar, Box, Card, Divider, Grid2, Stack, Typography } from "@mui/material";
+import { Avatar, Box, Card, Divider, Grid2, Stack, SxProps, Theme, Typography } from "@mui/material";
 import { notFound } from "next/navigation";
 
 import { getValidSession } from "@/features/auth/actions";
 import { getAppUser } from "@/features/users/actions";
+
+const cardStyle: SxProps<Theme> = {
+  maxWidth: 480,
+  mt: 5,
+  mx: "auto",
+  width: "100%",
+};
 
 export const Page = async () => {
   const session = await getValidSession();
@@ -12,15 +19,7 @@ export const Page = async () => {
   if (!appUser) notFound();
 
   return (
-    <Card
-      variant="outlined"
-      sx={{
-        maxWidth: 480,
-        mt: 5,
-        mx: "auto",
-        width: "100%",
-      }}
-    >
+    <Card variant="outlined" sx={cardStyle}>
       <Grid2 display="flex" justifyContent="center" alignItems="center" my={5}>
         <Grid2 mr={3}>
           <Avatar>
