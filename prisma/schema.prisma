@@ -17,6 +17,7 @@ model User {
   is_active Boolean
   role String
   auth0Id   String   @unique
+  description String?
   channels Channel[]
   episodes Episode[]
   comments Comments[]

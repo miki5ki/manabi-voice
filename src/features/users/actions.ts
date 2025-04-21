@@ -14,6 +14,7 @@ const UserSchema = z.object({
   id: z.string(),
   name: z.string(),
   auth0Id: z.string(),
+  description: z.string(),
   email: z.string(),
   is_active: z.boolean(),
   role: z.string(),
@@ -73,6 +74,7 @@ export const updateAppUser = async (formData: FormData) => {
   const validUser = validateSchema(UpdateUserSchema, {
     id: formData.get("userId"),
     name: formData.get("userName"),
+    description: formData.get("userDescription"),
     email: formData.get("userEmail"),
   });
 
@@ -80,6 +82,7 @@ export const updateAppUser = async (formData: FormData) => {
     await prisma.user.update({
       data: {
         name: validUser.name,
+        description: validUser.description,
         email: validUser.email,
       },
       where: {
