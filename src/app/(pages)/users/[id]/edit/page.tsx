@@ -2,7 +2,6 @@ import { AccountCircle } from "@mui/icons-material";
 import { Avatar, Button, Card, Grid2, Stack, SxProps, TextField, Theme } from "@mui/material";
 import { notFound } from "next/navigation";
 
-import { DeactivateButton } from "@/app/components/DeactivateButton";
 import { getValidSession } from "@/features/auth/actions";
 import { getAppUser, updateAppUser } from "@/features/users/actions";
 
@@ -46,13 +45,13 @@ const page = async () => {
           </Grid2>
         </form>
       </Card>
-      <DeactivateButton
+      {/* <DeactivateButton
         deactivateInfo={{
           appUserId: appUser.id,
           loginUserId: session.user.appUserId,
           loginUserRole: session.user.role,
         }}
-      />
+      /> */}
     </>
   );
 };
