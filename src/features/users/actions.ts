@@ -1,6 +1,8 @@
 "use server";
 
 import { SessionData } from "@auth0/nextjs-auth0/types";
+import { revalidatePath } from "next/cache";
+import { redirect } from "next/navigation";
 import { cache } from "react";
 import { z } from "zod";
 
@@ -72,10 +74,10 @@ export async function upsertAppUser(sessionData: SessionData) {
 
 export const updateAppUser = async (formData: FormData) => {
   const validUser = validateSchema(UpdateUserSchema, {
-    id: formData.get("userId"),
-    name: formData.get("userName"),
-    description: formData.get("userDescription"),
-    email: formData.get("userEmail"),
+    id: formData.get("appUserId"),
+    name: formData.get("appUserName"),
+    description: formData.get("appUserDescription"),
+    email: formData.get("appUserEmail"),
   });
 
   try {
@@ -93,6 +95,8 @@ export const updateAppUser = async (formData: FormData) => {
     // handler内のthrowで終了する関数なので return 不要
     prismaErrorHandler(e);
   }
+  revalidatePath(`/users/${validUser.id}`);
+  redirect(`/users/${validUser.id}`);
 };
 
 export const getAppUser = cache(async (id: string) => {
