@@ -4,6 +4,7 @@ import { revalidatePath } from "next/cache";
 import { redirect } from "next/navigation";
 import { z } from "zod";
 
+import { assertIsOwner } from "@/lib/permission";
 import { prisma } from "@/lib/prisma";
 import { prismaErrorHandler } from "@/lib/prismaErrorHandler";
 import { validateSchema } from "@/lib/validation";
@@ -20,11 +21,16 @@ const EpisodeSchema = z.object({
 
 const CreateEpisodeSchema = EpisodeSchema.omit({ id: true });
 
+const EditEpisodeSchema = EpisodeSchema.extend({
+  loginAppUserId: z.string(),
+});
+
 const DeleteEpisodeSchema = EpisodeSchema.omit({
   title: true,
   appUserId: true,
   audioId: true,
   categoryId: true,
+  channelId: true,
   description: true,
 });
 
@@ -112,22 +118,24 @@ export async function getEpisodes(params: GetEpisodesParams = {}) {
 }
 
 export async function updateEpisode(formData: FormData) {
-  const validEpisode = validateSchema(EpisodeSchema, {
+  const validEpisode = validateSchema(EditEpisodeSchema, {
     id: formData.get("episodeId"),
     title: formData.get("episodeTitle"),
-    appUserId: formData.get("appUserId"),
+    appUserId: formData.get("createdAppUserId"),
     audioId: formData.get("audioId"),
     categoryId: formData.get("categoryId"),
     channelId: formData.get("channelId"),
     description: formData.get("episodeDescription"),
+    loginAppUserId: formData.get("loginAppUserId"),
   });
+
+  assertIsOwner(validEpisode.loginAppUserId, validEpisode.appUserId);
 
   try {
     await prisma.$transaction(async (prisma) => {
       await prisma.episode.update({
         data: {
           title: validEpisode.title,
-          appUserId: validEpisode.appUserId,
           audioId: validEpisode.audioId,
           description: validEpisode.description,
         },
