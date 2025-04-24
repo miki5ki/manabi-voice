@@ -1,5 +1,6 @@
 "use server";
 
+import type { Category } from "@prisma/client";
 import { revalidatePath } from "next/cache";
 import { redirect } from "next/navigation";
 import { z } from "zod";
@@ -50,17 +51,16 @@ export async function getCategory(categoryId: string) {
   }
 }
 
-export async function getCategories(params: GetCategoriesParams) {
+export async function getCategories(params?: GetCategoriesParams): Promise<Category[]> {
   try {
     const res = await prisma.category.findMany({
       where: {
-        ...(params.keyWord ? { title: { contains: params.keyWord } } : {}),
+        ...(params?.keyWord ? { title: { contains: params.keyWord } } : {}),
       },
     });
     return res;
   } catch (e) {
-    // handler内のthrowで終了する関数なので return 不要
-    prismaErrorHandler(e);
+    throw prismaErrorHandler(e);
   }
 }
 
