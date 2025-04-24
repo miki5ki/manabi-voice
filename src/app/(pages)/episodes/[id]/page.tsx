@@ -7,6 +7,7 @@ import { WideCard } from "@/app/components/WideCard";
 import { getValidSession } from "@/features/auth/actions";
 import { CreateComment, getComments } from "@/features/comments/actions";
 import { getEpisode } from "@/features/episodes/actions";
+import { isOwner } from "@/lib/permission";
 
 const buttonStyles: SxProps<Theme> = {
   width: "80%",
@@ -36,7 +37,6 @@ type Props = {
   params: {
     id: string;
   };
-  searchParams: object;
 };
 const EpisodeShowPage = async (props: Props) => {
   const session = await getValidSession();
@@ -49,9 +49,13 @@ const EpisodeShowPage = async (props: Props) => {
   return (
     <>
       <Box m={4}>
-        <Link key={episode.id} href={`/episodes/${episode.id}/edit`} passHref style={linkStyle}>
-          <WideCard key={episode.id} {...episode} />
-        </Link>
+        {isOwner(session.user.appUserId, episode.appUserId) ? (
+          <Link href={`/episodes/${episode.id}/edit`} passHref style={linkStyle}>
+            <WideCard key={episode.id} {...episode} />
+          </Link>
+        ) : (
+          <WideCard {...episode} />
+        )}
         <Typography my={3} variant="h6">
           コメント
         </Typography>
