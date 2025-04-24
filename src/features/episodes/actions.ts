@@ -25,9 +25,10 @@ const EditEpisodeSchema = EpisodeSchema.extend({
   loginAppUserId: z.string(),
 });
 
-const DeleteEpisodeSchema = EpisodeSchema.omit({
+const DeleteEpisodeSchema = EpisodeSchema.extend({
+  loginAppUserId: z.string(),
+}).omit({
   title: true,
-  appUserId: true,
   audioId: true,
   categoryId: true,
   channelId: true,
@@ -167,7 +168,11 @@ export async function updateEpisode(formData: FormData) {
 export async function deleteEpisode(formData: FormData) {
   const validEpisode = validateSchema(DeleteEpisodeSchema, {
     id: formData.get("episodeId"),
+    appUserId: formData.get("createdAppUserId"),
+    loginAppUserId: formData.get("loginAppUserId"),
   });
+
+  assertIsOwner(validEpisode.loginAppUserId, validEpisode.appUserId);
 
   try {
     await prisma.$transaction(async (prisma) => {
