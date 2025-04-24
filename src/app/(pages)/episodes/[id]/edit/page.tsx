@@ -3,6 +3,7 @@ import { notFound } from "next/navigation";
 
 import { getValidSession } from "@/features/auth/actions";
 import { getCategories } from "@/features/categories/actions";
+import { getCategoriesByEpisode } from "@/features/categories/relations/actions";
 import { deleteEpisode, getEpisode, updateEpisode } from "@/features/episodes/actions";
 import { assertIsOwner } from "@/lib/permission";
 
@@ -26,7 +27,8 @@ const EpisodeEditPage = async (props: Props) => {
   const { id } = params;
   const episode = await getEpisode(id);
   const categories = await getCategories();
-  if (!episode || !categories.length) notFound();
+  const selectedCategory = await getCategoriesByEpisode(id);
+  if (!episode || !categories.length || !selectedCategory) notFound();
   assertIsOwner(session.user.appUserId, episode.appUserId);
 
   return (
@@ -47,7 +49,7 @@ const EpisodeEditPage = async (props: Props) => {
               label="詳細"
               multiline
             />
-            <TextField select name="categoryId" label="カテゴリー">
+            <TextField select name="categoryId" label="カテゴリー" defaultValue={selectedCategory.categoryId}>
               {categories.map((category) => (
                 <MenuItem key={category.id} value={category.id}>
                   {category.title}
