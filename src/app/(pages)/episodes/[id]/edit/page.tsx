@@ -1,8 +1,10 @@
+import { Button, Card, Grid2, MenuItem, Stack, SxProps, TextField, Theme } from "@mui/material";
 import { notFound } from "next/navigation";
 
 import { getValidSession } from "@/features/auth/actions";
 import { getCategories } from "@/features/categories/actions";
 import { deleteEpisode, getEpisode, updateEpisode } from "@/features/episodes/actions";
+import { assertIsOwner } from "@/lib/permission";
 
 type Props = {
   params: {
@@ -11,31 +13,62 @@ type Props = {
   searchParams: object;
 };
 
+const cardStyle: SxProps<Theme> = {
+  maxWidth: 480,
+  mt: 5,
+  mx: "auto",
+  width: "100%",
+};
+
 const EpisodeEditPage = async (props: Props) => {
   const session = await getValidSession();
   const { params } = props;
   const { id } = params;
   const episode = await getEpisode(id);
   const categories = await getCategories();
-  if (!episode) notFound();
+  if (!episode || !categories.length) notFound();
+  assertIsOwner(session.user.appUserId, episode.appUserId);
 
   return (
     <>
-      <form method="POST" action={updateEpisode}>
-        <input hidden name="episodeId" value={id} />
-        <input hidden name="appUserId" defaultValue={session.user.appUserId} />
-        <input name="episodeTitle" type="input" defaultValue={episode.title} />
-        <input name="episodeDescription" type="input" defaultValue={episode.description} />
-        <select name="categoryId">
-          {categories.map((category) => (
-            <option key={category.id} value={category.id}>
-              {category.title}
-            </option>
-          ))}
-        </select>
-        <button formAction={updateEpisode}>保存</button>
-        <button formAction={deleteEpisode}>削除</button>
-      </form>
+      <Card variant="outlined" sx={cardStyle}>
+        <form action={updateEpisode}>
+          <Stack m={3} spacing={3}>
+            <input hidden name="episodeId" value={id} readOnly />
+            <input hidden name="loginAppUserId" value={session.user.appUserId} readOnly />
+            <input hidden name="createdAppUserId" value={episode.appUserId} readOnly />
+            <input hidden name="audioId" value={episode.audioId} readOnly />
+            <input hidden name="channelId" value={episode.channelId} readOnly />
+            <TextField name="episodeTitle" defaultValue={episode.title} label="タイトル" />
+            <TextField
+              name="episodeDescription"
+              type="input"
+              defaultValue={episode.description}
+              label="詳細"
+              multiline
+            />
+            <TextField select name="categoryId" label="カテゴリー">
+              {categories.map((category) => (
+                <MenuItem key={category.id} value={category.id}>
+                  {category.title}
+                </MenuItem>
+              ))}
+            </TextField>
+          </Stack>
+          <Grid2 display="flex" justifyContent="center" m={5} container spacing={2}>
+            <Grid2>
+              <Button variant="contained" type="submit" formAction={updateEpisode}>
+                保存
+              </Button>
+            </Grid2>
+            <Grid2>
+              <Button type="submit" formAction={deleteEpisode}>
+                削除
+              </Button>
+            </Grid2>
+          </Grid2>
+        </form>
+      </Card>
     </>
   );
 };
