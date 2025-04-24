@@ -1,5 +1,6 @@
 import { AccountCircle } from "@mui/icons-material";
 import { Box, Button, IconButton, Stack, SxProps, TextField, Theme, Typography } from "@mui/material";
+import Link from "next/link";
 import { notFound } from "next/navigation";
 
 import { WideCard } from "@/app/components/WideCard";
@@ -27,6 +28,10 @@ const commentFormStyle = {
   gap: "8px",
 };
 
+const linkStyle = {
+  textDecoration: "none",
+};
+
 type Props = {
   params: {
     id: string;
@@ -44,7 +49,9 @@ const EpisodeShowPage = async (props: Props) => {
   return (
     <>
       <Box m={4}>
-        <WideCard key={episode.id} {...episode} />
+        <Link key={episode.id} href={`/episodes/${episode.id}/edit`} passHref style={linkStyle}>
+          <WideCard key={episode.id} {...episode} />
+        </Link>
         <Typography my={3} variant="h6">
           コメント
         </Typography>
