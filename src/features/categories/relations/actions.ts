@@ -50,3 +50,17 @@ export async function getEpisodesByCategory(categoryId: string) {
     prismaErrorHandler(e);
   }
 }
+
+export async function getCategoriesByEpisode(episodeId: string) {
+  try {
+    const res = await prisma.episodesCategoriesRelations.findUniqueOrThrow({
+      where: {
+        episodeId: episodeId,
+      },
+    });
+    return res;
+  } catch (e) {
+    // handler内のthrowで終了する関数なので return 不要
+    prismaErrorHandler(e);
+  }
+}

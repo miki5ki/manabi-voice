@@ -1,11 +1,13 @@
 import { AccountCircle } from "@mui/icons-material";
 import { Box, Button, IconButton, Stack, SxProps, TextField, Theme, Typography } from "@mui/material";
+import Link from "next/link";
 import { notFound } from "next/navigation";
 
 import { WideCard } from "@/app/components/WideCard";
 import { getValidSession } from "@/features/auth/actions";
 import { CreateComment, getComments } from "@/features/comments/actions";
 import { getEpisode } from "@/features/episodes/actions";
+import { isOwner } from "@/lib/permission";
 
 const buttonStyles: SxProps<Theme> = {
   width: "80%",
@@ -27,11 +29,14 @@ const commentFormStyle = {
   gap: "8px",
 };
 
+const linkStyle = {
+  textDecoration: "none",
+};
+
 type Props = {
   params: {
     id: string;
   };
-  searchParams: object;
 };
 const EpisodeShowPage = async (props: Props) => {
   const session = await getValidSession();
@@ -44,7 +49,13 @@ const EpisodeShowPage = async (props: Props) => {
   return (
     <>
       <Box m={4}>
-        <WideCard key={episode.id} {...episode} />
+        {isOwner(session.user.appUserId, episode.appUserId) ? (
+          <Link href={`/episodes/${episode.id}/edit`} passHref style={linkStyle}>
+            <WideCard key={episode.id} {...episode} />
+          </Link>
+        ) : (
+          <WideCard {...episode} />
+        )}
         <Typography my={3} variant="h6">
           コメント
         </Typography>
