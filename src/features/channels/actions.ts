@@ -1,9 +1,11 @@
 "use server";
 
+import { Channel } from "@prisma/client";
 import { revalidatePath } from "next/cache";
 import { redirect } from "next/navigation";
 import { z } from "zod";
 
+import { assertIsOwner } from "@/lib/permission";
 import { prisma } from "@/lib/prisma";
 import { prismaErrorHandler } from "@/lib/prismaErrorHandler";
 import { validateSchema } from "@/lib/validation";
@@ -17,7 +19,14 @@ const ChannelSchema = z.object({
 });
 
 const CreateChannelSchema = ChannelSchema.omit({ id: true });
-const DeleteChannelSchema = ChannelSchema.omit({ title: true, categoryId: true, description: true });
+
+const EditChannelSchema = ChannelSchema.extend({
+  loginAppUserId: z.string(),
+});
+
+const DeleteChannelSchema = ChannelSchema.extend({
+  loginAppUserId: z.string(),
+}).omit({ title: true, categoryId: true, description: true });
 
 type GetChannelsParams = {
   appUserId?: string;
@@ -60,18 +69,17 @@ export async function createChannel(formData: FormData) {
   redirect("/channels");
 }
 
-export async function getChannels(params: GetChannelsParams = {}) {
+export async function getChannels(params: GetChannelsParams = {}): Promise<Channel[]> {
   try {
     const res = await prisma.channel.findMany({
       where: {
-        ...(params.appUserId ? { title: { contains: params.appUserId } } : {}),
-        ...(params.keyWord ? { title: { contains: params.keyWord } } : {}),
+        ...(params?.appUserId ? { appUserId: params.appUserId } : {}),
+        ...(params?.keyWord ? { title: { contains: params.keyWord } } : {}),
       },
     });
     return res;
   } catch (e) {
-    // handler内のthrowで終了する関数なので return 不要
-    prismaErrorHandler(e);
+    throw prismaErrorHandler(e);
   }
 }
 
@@ -91,13 +99,15 @@ export async function getChannel(channelId: string) {
 }
 
 export async function updateChannel(formData: FormData) {
-  const validChannel = validateSchema(ChannelSchema, {
+  const validChannel = validateSchema(EditChannelSchema, {
     id: formData.get("channelId"),
     title: formData.get("channelTitle"),
+    appUserId: formData.get("createdAppUserId"),
     categoryId: formData.get("categoryId"),
     description: formData.get("channelDescription"),
-    userId: formData.get("appUserId"),
+    loginAppUserId: formData.get("loginAppUserId"),
   });
+  assertIsOwner(validChannel.loginAppUserId, validChannel.appUserId);
 
   try {
     await prisma.$transaction(async (prisma) => {
@@ -131,7 +141,11 @@ export async function updateChannel(formData: FormData) {
 export async function deleteChannel(formData: FormData) {
   const validChannel = validateSchema(DeleteChannelSchema, {
     id: formData.get("channelId"),
+    appUserId: formData.get("createdAppUserId"),
+    loginAppUserId: formData.get("loginAppUserId"),
   });
+
+  assertIsOwner(validChannel.loginAppUserId, validChannel.appUserId);
 
   try {
     await prisma.$transaction(async (prisma) => {
