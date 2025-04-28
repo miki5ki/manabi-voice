@@ -27,6 +27,20 @@ export async function getChannelsByCategory(categoryId: string) {
   }
 }
 
+export async function getCategoriesByChannel(channelId: string) {
+  try {
+    const res = await prisma.channelsCategoriesRelations.findUniqueOrThrow({
+      where: {
+        channelId: channelId,
+      },
+    });
+    return res;
+  } catch (e) {
+    // handler内のthrowで終了する関数なので return 不要
+    prismaErrorHandler(e);
+  }
+}
+
 export async function getEpisodesByCategory(categoryId: string) {
   try {
     const relations = await prisma.episodesCategoriesRelations.findMany({

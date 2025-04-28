@@ -34,7 +34,7 @@ const EpisodeEditPage = async (props: Props) => {
   return (
     <>
       <Card variant="outlined" sx={cardStyle}>
-        <form action={updateEpisode}>
+        <form>
           <Stack m={3} spacing={3}>
             <input hidden name="episodeId" value={id} readOnly />
             <input hidden name="loginAppUserId" value={session.user.appUserId} readOnly />
