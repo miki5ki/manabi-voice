@@ -6,11 +6,12 @@ import { redirect } from "next/navigation";
 import { cache } from "react";
 import { z } from "zod";
 
+import { assertHasPermission } from "@/lib/permission";
 import { prisma } from "@/lib/prisma";
 import { prismaErrorHandler } from "@/lib/prismaErrorHandler";
 import { validateSchema } from "@/lib/validation";
 
-import { DeactivateUserInfo } from "./types";
+import { getValidSession } from "../auth/actions";
 
 const UserSchema = z.object({
   id: z.string(),
@@ -29,9 +30,7 @@ const UpdateUserSchema = UserSchema.omit({
 });
 
 const DeactivateUserSchema = z.object({
-  loginUserId: z.string(),
-  loginUserRole: z.string(),
-  userProfileId: z.string(),
+  appUserId: z.string(),
 });
 
 export async function upsertAppUser(sessionData: SessionData) {
@@ -126,24 +125,23 @@ export const getAppUsers = async (role: string) => {
   }
 };
 
-export const deactivateAppUser = async (deactivateInfo: DeactivateUserInfo) => {
+export const deactivateAppUser = async (appUserId: string) => {
   const validUser = validateSchema(DeactivateUserSchema, {
-    loginUserId: deactivateInfo.loginUserId,
-    loginUserRole: deactivateInfo.loginUserRole,
-    userProfileId: deactivateInfo.userProfileId,
+    appUserId: appUserId,
   });
 
+  const appUser = await getValidSession();
+  assertHasPermission(appUser.user.appUserRole, "user:deactivate");
+
   try {
-    if (validUser.loginUserId == validUser.userProfileId || validUser.loginUserRole == "admin") {
-      await prisma.user.update({
-        data: {
-          is_active: false,
-        },
-        where: {
-          id: validUser.userProfileId,
-        },
-      });
-    }
+    await prisma.user.update({
+      data: {
+        is_active: false,
+      },
+      where: {
+        id: validUser.appUserId,
+      },
+    });
   } catch (e) {
     // handler内のthrowで終了する関数なので return 不要
     prismaErrorHandler(e);

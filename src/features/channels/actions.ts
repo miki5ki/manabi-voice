@@ -5,10 +5,12 @@ import { revalidatePath } from "next/cache";
 import { redirect } from "next/navigation";
 import { z } from "zod";
 
-import { assertIsOwner } from "@/lib/permission";
+import { assertHasPermission, assertIsOwner } from "@/lib/permission";
 import { prisma } from "@/lib/prisma";
 import { prismaErrorHandler } from "@/lib/prismaErrorHandler";
 import { validateSchema } from "@/lib/validation";
+
+import { getValidSession } from "../auth/actions";
 
 const ChannelSchema = z.object({
   id: z.string(),
@@ -20,13 +22,7 @@ const ChannelSchema = z.object({
 
 const CreateChannelSchema = ChannelSchema.omit({ id: true });
 
-const EditChannelSchema = ChannelSchema.extend({
-  loginAppUserId: z.string(),
-});
-
-const DeleteChannelSchema = ChannelSchema.extend({
-  loginAppUserId: z.string(),
-}).omit({ title: true, categoryId: true, description: true });
+const DeleteChannelSchema = ChannelSchema.omit({ title: true, categoryId: true, description: true });
 
 type GetChannelsParams = {
   appUserId?: string;
@@ -40,6 +36,9 @@ export async function createChannel(formData: FormData) {
     categoryId: formData.get("categoryId"),
     description: formData.get("channelDescription"),
   });
+
+  const appUser = await getValidSession();
+  assertHasPermission(appUser.user.appUserRole, "channel:create");
 
   try {
     await prisma.$transaction(async (prisma) => {
@@ -105,8 +104,10 @@ export async function updateChannel(formData: FormData) {
     appUserId: formData.get("createdAppUserId"),
     categoryId: formData.get("categoryId"),
     description: formData.get("channelDescription"),
-    loginAppUserId: formData.get("loginAppUserId"),
   });
+  const appUser = await getValidSession();
+
+  assertHasPermission(appUser.user.appUserRole, "channel:update");
   assertIsOwner(validChannel.loginAppUserId, validChannel.appUserId);
 
   try {

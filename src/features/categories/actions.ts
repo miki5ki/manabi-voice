@@ -5,9 +5,12 @@ import { revalidatePath } from "next/cache";
 import { redirect } from "next/navigation";
 import { z } from "zod";
 
+import { assertHasPermission } from "@/lib/permission";
 import { prisma } from "@/lib/prisma";
 import { prismaErrorHandler } from "@/lib/prismaErrorHandler";
 import { validateSchema } from "@/lib/validation";
+
+import { getValidSession } from "../auth/actions";
 
 type GetCategoriesParams = {
   keyWord?: string;
@@ -22,6 +25,8 @@ const DeleteCategorySchema = CategorySchema.omit({ title: true });
 
 export async function createCategory(formData: FormData) {
   const validCategory = validateSchema(CreateCategorySchema, { title: formData.get("categoryTitle") });
+  const appUser = await getValidSession();
+  assertHasPermission(appUser.user.appUserRole, "category:create");
 
   try {
     await prisma.category.create({
@@ -70,6 +75,9 @@ export async function updateCategory(formData: FormData) {
     title: formData.get("categoryTitle"),
   });
 
+  const appUser = await getValidSession();
+  assertHasPermission(appUser.user.appUserRole, "category:update");
+
   try {
     await prisma.category.update({
       data: {
@@ -92,6 +100,9 @@ export async function deleteCategory(formData: FormData) {
   const validCategory = validateSchema(DeleteCategorySchema, {
     id: formData.get("categoryId"),
   });
+
+  const appUser = await getValidSession();
+  assertHasPermission(appUser.user.appUserRole, "category:delete");
 
   try {
     await prisma.category.delete({
