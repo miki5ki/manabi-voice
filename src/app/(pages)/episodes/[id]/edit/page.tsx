@@ -5,7 +5,7 @@ import { getValidSession } from "@/features/auth/actions";
 import { getCategories } from "@/features/categories/actions";
 import { getCategoriesByEpisode } from "@/features/categories/relations/actions";
 import { deleteEpisode, getEpisode, updateEpisode } from "@/features/episodes/actions";
-import { assertIsOwner } from "@/lib/permission";
+import { assertHasPermission, assertIsOwner } from "@/lib/permission";
 
 type Props = {
   params: {
@@ -29,6 +29,7 @@ const EpisodeEditPage = async (props: Props) => {
   const categories = await getCategories();
   const selectedCategory = await getCategoriesByEpisode(id);
   if (!episode || !categories.length || !selectedCategory) notFound();
+  assertHasPermission(session.user.appUserRole, "episode:update");
   assertIsOwner(session.user.appUserId, episode.appUserId);
 
   return (
@@ -37,7 +38,6 @@ const EpisodeEditPage = async (props: Props) => {
         <form>
           <Stack m={3} spacing={3}>
             <input hidden name="episodeId" value={id} readOnly />
-            <input hidden name="loginAppUserId" value={session.user.appUserId} readOnly />
             <input hidden name="createdAppUserId" value={episode.appUserId} readOnly />
             <input hidden name="audioId" value={episode.audioId} readOnly />
             <input hidden name="channelId" value={episode.channelId} readOnly />

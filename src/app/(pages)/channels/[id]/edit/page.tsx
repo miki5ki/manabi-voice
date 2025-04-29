@@ -6,6 +6,7 @@ import { getValidSession } from "@/features/auth/actions";
 import { getCategories } from "@/features/categories/actions";
 import { getCategoriesByChannel } from "@/features/categories/relations/actions";
 import { deleteChannel, getChannel, updateChannel } from "@/features/channels/actions";
+import { assertHasPermission, assertIsOwner } from "@/lib/permission";
 
 type Props = {
   params: {
@@ -22,13 +23,15 @@ const cardStyle: SxProps<Theme> = {
 };
 
 const ChannelEditPage = async (props: Props) => {
+  const session = await getValidSession();
   const { params } = props;
   const { id } = params;
   const channel = await getChannel(id);
   const categories = await getCategories();
   const selectedCategory = await getCategoriesByChannel(id);
   if (!channel || !categories || !selectedCategory) notFound();
-  const session = await getValidSession();
+  assertHasPermission(session.user.appUserRole, "channel:update");
+  assertIsOwner(session.user.appUserId, channel.appUserId);
 
   return (
     <>
@@ -36,7 +39,6 @@ const ChannelEditPage = async (props: Props) => {
         <form>
           <Stack m={3} spacing={3}>
             <input type="hidden" name="channelId" value={channel.id} readOnly />
-            <input type="hidden" name="loginAppUserId" value={session.user.appUserId} readOnly />
             <input hidden name="createdAppUserId" value={channel.appUserId} readOnly />
             <TextField type="text" name="channelTitle" defaultValue={channel.title} required label="タイトル" />
             <TextField
@@ -61,7 +63,7 @@ const ChannelEditPage = async (props: Props) => {
               </Button>
             </Grid2>
             <Grid2>
-              <Button type="submit" formAction={deleteChannel}>
+              <Button type="submit" formAction={deleteChannel} color="error">
                 削除
               </Button>
             </Grid2>
