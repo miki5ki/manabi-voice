@@ -10,7 +10,7 @@ export const ViewCard = (props: CategoryCardProps | ChannelCardProps | EpisodeCa
     <>
       <Grid2 size={{ lg: 3, md: 4, xs: 6 }}>
         <Card sx={{ height: "100%" }}>
-          <CardActionArea href={`${viewType}/${id}`}>
+          <CardActionArea href={`/${viewType}/${id}`}>
             <CardContent>
               <Typography variant="subtitle1" fontWeight={"bold"}>
                 {title}
