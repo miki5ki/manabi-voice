@@ -2,13 +2,13 @@ import { notFound } from "next/navigation";
 
 import { DeactivateButton } from "@/app/components/DeactivateButton";
 import { getValidSession } from "@/features/auth/actions";
-import { getAppUser, getAppUsers } from "@/features/users/actions";
+import { getAppUsers } from "@/features/users/actions";
+import { assertHasPermission } from "@/lib/permission";
 
 const page = async () => {
   const session = await getValidSession();
-  const loginUserProfile = await getAppUser(session.user.appUserId);
-  if (!loginUserProfile || loginUserProfile.role == "user") notFound();
-  const appUsers = await getAppUsers(loginUserProfile.role);
+  const appUsers = await getAppUsers(session.user.appUserRole);
+  assertHasPermission(session.user.appUserRole, "user:deactivate");
   if (!appUsers) notFound();
 
   return (
@@ -20,13 +20,7 @@ const page = async () => {
             <span>{appUser.name}</span>
             <span>{appUser.email}</span>
             <span>{appUser.id}</span>
-            <DeactivateButton
-              deactivateInfo={{
-                appUserId: appUser.id,
-                loginUserId: loginUserProfile.id,
-                loginUserRole: loginUserProfile.role,
-              }}
-            />
+            <DeactivateButton appUserId={appUser.id} />
           </div>
         ))}
     </>
