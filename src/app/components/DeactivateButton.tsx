@@ -1,5 +1,6 @@
 "use client";
 
+import { Button } from "@mui/material";
 import { useState } from "react";
 
 import { deactivateAppUser } from "@/features/users/actions";
@@ -24,8 +25,8 @@ export const DeactivateButton = (props: Props) => {
   };
 
   return (
-    <button onClick={handleDeactivate} disabled={isProcessing}>
+    <Button onClick={handleDeactivate} color="error" variant="outlined" disabled={isProcessing}>
       {isProcessing ? "処理中..." : "退会"}
-    </button>
+    </Button>
   );
 };
