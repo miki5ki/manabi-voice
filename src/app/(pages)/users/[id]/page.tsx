@@ -5,6 +5,13 @@ import { notFound } from "next/navigation";
 
 import { getValidSession } from "@/features/auth/actions";
 import { getAppUser } from "@/features/users/actions";
+import { isOwner } from "@/lib/permission";
+
+type Props = {
+  params: {
+    id: string;
+  };
+};
 
 const cardStyle: SxProps<Theme> = {
   maxWidth: 480,
@@ -13,9 +20,11 @@ const cardStyle: SxProps<Theme> = {
   width: "100%",
 };
 
-export const Page = async () => {
+export const Page = async (props: Props) => {
+  const { params } = props;
+  const { id: createdAppUserId } = params;
   const session = await getValidSession();
-  const appUser = await getAppUser(session.user.appUserId);
+  const appUser = await getAppUser(createdAppUserId);
 
   if (!appUser) notFound();
 
@@ -40,12 +49,14 @@ export const Page = async () => {
             <Typography p={3}>{appUser.description}</Typography>
           </Box>
         </Grid2>
+        {isOwner(session.user.appUserId, createdAppUserId) && (
+          <Grid2 display="flex" justifyContent="center" m={3}>
+            <Button component={Link} href={`/users/${appUser.id}/edit`} color="secondary" variant="outlined">
+              編集
+            </Button>
+          </Grid2>
+        )}
       </Card>
-      <Grid2 display="flex" justifyContent="center" m={5}>
-        <Link href={`/users/${appUser.id}/edit`} passHref>
-          <Button variant="contained">編集する</Button>
-        </Link>
-      </Grid2>
     </>
   );
 };
