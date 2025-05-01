@@ -13,6 +13,7 @@ export const auth0 = new Auth0Client({
       user: {
         ...session.user,
         appUserId: appUser.id,
+        appUserRole: appUser.role,
       },
     };
   },

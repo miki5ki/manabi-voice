@@ -4,10 +4,12 @@ import { revalidatePath } from "next/cache";
 import { redirect } from "next/navigation";
 import { z } from "zod";
 
-import { assertIsOwner } from "@/lib/permission";
+import { assertHasPermission, assertIsOwner } from "@/lib/permission";
 import { prisma } from "@/lib/prisma";
 import { prismaErrorHandler } from "@/lib/prismaErrorHandler";
 import { validateSchema } from "@/lib/validation";
+
+import { getValidSession } from "../auth/actions";
 
 const EpisodeSchema = z.object({
   id: z.string(),
@@ -25,9 +27,7 @@ const EditEpisodeSchema = EpisodeSchema.extend({
   loginAppUserId: z.string(),
 });
 
-const DeleteEpisodeSchema = EpisodeSchema.extend({
-  loginAppUserId: z.string(),
-}).omit({
+const DeleteEpisodeSchema = EpisodeSchema.omit({
   title: true,
   audioId: true,
   categoryId: true,
@@ -59,6 +59,9 @@ export async function createEpisode(formData: FormData) {
         channelId: formData.get("channelId"),
         description: formData.get("episodeDescription"),
       });
+
+      const appUser = await getValidSession();
+      assertHasPermission(appUser.user.appUserRole, "episode:create");
 
       const episode = await prisma.episode.create({
         data: {
@@ -127,9 +130,10 @@ export async function updateEpisode(formData: FormData) {
     categoryId: formData.get("categoryId"),
     channelId: formData.get("channelId"),
     description: formData.get("episodeDescription"),
-    loginAppUserId: formData.get("loginAppUserId"),
   });
 
+  const appUser = await getValidSession();
+  assertHasPermission(appUser.user.appUserRole, "episode:create");
   assertIsOwner(validEpisode.loginAppUserId, validEpisode.appUserId);
 
   try {
