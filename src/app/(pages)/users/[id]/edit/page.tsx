@@ -2,8 +2,16 @@ import { AccountCircle } from "@mui/icons-material";
 import { Avatar, Button, Card, Grid2, Stack, SxProps, TextField, Theme } from "@mui/material";
 import { notFound } from "next/navigation";
 
+import { DeactivateButton } from "@/app/components/DeactivateButton";
 import { getValidSession } from "@/features/auth/actions";
 import { getAppUser, updateAppUser } from "@/features/users/actions";
+import { assertIsOwner } from "@/lib/permission";
+
+type Props = {
+  params: {
+    id: string;
+  };
+};
 
 const cardStyle: SxProps<Theme> = {
   maxWidth: 480,
@@ -12,10 +20,12 @@ const cardStyle: SxProps<Theme> = {
   width: "100%",
 };
 
-const page = async () => {
+const page = async (props: Props) => {
+  const { params } = props;
+  const { id: createdAppUserId } = params;
   const session = await getValidSession();
-  const appUser = await getAppUser(session.user.appUserId);
-
+  const appUser = await getAppUser(createdAppUserId);
+  assertIsOwner(session.user.appUserId, createdAppUserId);
   if (!appUser) notFound();
 
   return (
@@ -28,7 +38,7 @@ const page = async () => {
         </Grid2>
         <form action={updateAppUser}>
           <Stack m={3} spacing={3}>
-            <input name="appUserId" hidden defaultValue={appUser.id} />
+            <input name="appUserId" hidden defaultValue={appUser.id} readOnly />
             <TextField label="ユーザー名" defaultValue={appUser.name} name="appUserName"></TextField>
             <TextField label="メールアドレス" defaultValue={appUser.email} name="appUserEmail"></TextField>
             <TextField
@@ -38,20 +48,14 @@ const page = async () => {
               name="appUserDescription"
             ></TextField>
           </Stack>
-          <Grid2 display="flex" justifyContent="center" m={5}>
+          <Grid2 display="flex" justifyContent="center" m={5} container spacing={2}>
             <Button variant="contained" type="submit">
               保存
             </Button>
+            <DeactivateButton appUserId={appUser.id} />
           </Grid2>
         </form>
       </Card>
-      {/* <DeactivateButton
-        deactivateInfo={{
-          appUserId: appUser.id,
-          loginUserId: session.user.appUserId,
-          loginUserRole: session.user.role,
-        }}
-      /> */}
     </>
   );
 };

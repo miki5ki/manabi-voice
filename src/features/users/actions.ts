@@ -6,7 +6,7 @@ import { redirect } from "next/navigation";
 import { cache } from "react";
 import { z } from "zod";
 
-import { assertHasPermission } from "@/lib/permission";
+import { assertHasPermission, assertIsOwner } from "@/lib/permission";
 import { prisma } from "@/lib/prisma";
 import { prismaErrorHandler } from "@/lib/prismaErrorHandler";
 import { validateSchema } from "@/lib/validation";
@@ -125,13 +125,14 @@ export const getAppUsers = async (role: string) => {
   }
 };
 
-export const deactivateAppUser = async (appUserId: string) => {
+export const deactivateAppUser = async (createdAppUserId: string) => {
   const validUser = validateSchema(DeactivateUserSchema, {
-    appUserId: appUserId,
+    appUserId: createdAppUserId,
   });
 
-  const appUser = await getValidSession();
-  assertHasPermission(appUser.user.appUserRole, "user:deactivate");
+  const session = await getValidSession();
+  assertHasPermission(session.user.appUserRole, "user:deactivate");
+  assertIsOwner(session.user.appUserId, createdAppUserId);
 
   try {
     await prisma.user.update({
