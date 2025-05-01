@@ -4,8 +4,10 @@ import Link from "next/link";
 import { notFound } from "next/navigation";
 
 import { WideCard } from "@/app/components/WideCard";
+import { getValidSession } from "@/features/auth/actions";
 import { getChannel } from "@/features/channels/actions";
 import { getEpisodes } from "@/features/episodes/actions";
+import { hasPermission } from "@/lib/permission";
 
 type Props = {
   params: {
@@ -37,6 +39,8 @@ const ChannelShowPage = async (props: Props) => {
   const channel = await getChannel(id);
   if (!channel) notFound();
   const episodes = await getEpisodes({ channelId: id });
+  const session = await getValidSession();
+  const editable = hasPermission(session.user.appUserRole, "channel:update");
   return (
     <>
       <Grid2 sx={gridStyle}>
@@ -50,21 +54,22 @@ const ChannelShowPage = async (props: Props) => {
           <Typography variant="subtitle1">{channel.description}</Typography>
         </Grid2>
       </Grid2>
-      <Grid2
-        mr={4}
-        container
-        sx={{
-          alignItems: "center",
-          justifyContent: "flex-end",
-        }}
-      >
-        <Link href={`/channels/${channel.id}/edit`}>
-          <Button color="secondary" variant="outlined">
-            編集
-          </Button>
-        </Link>
-      </Grid2>
-
+      {editable && (
+        <Grid2
+          mr={4}
+          container
+          sx={{
+            alignItems: "center",
+            justifyContent: "flex-end",
+          }}
+        >
+          <Link href={`/channels/${channel.id}/edit`}>
+            <Button color="secondary" variant="outlined">
+              編集
+            </Button>
+          </Link>
+        </Grid2>
+      )}
       <Box my={3}>
         <Typography variant="h6" my={3} mx={4}>
           エピソード一覧

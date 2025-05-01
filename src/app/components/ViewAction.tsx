@@ -4,7 +4,7 @@ import { Button, Grid2, InputAdornment, TextField } from "@mui/material";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
 
-export const ViewAction = ({ viewType }: { viewType: string }) => {
+export const ViewAction = ({ creatable, viewType }: { creatable: boolean; viewType: string }) => {
   const [keyWord, setKeyWord] = useState("");
   const router = useRouter();
 
@@ -33,10 +33,11 @@ export const ViewAction = ({ viewType }: { viewType: string }) => {
       <Button variant="outlined" color="secondary" aria-label="検索" onClick={handleSearch}>
         検索
       </Button>
-
-      <Button variant="contained" color="primary" href={`/${viewType}/create`}>
-        新規作成
-      </Button>
+      {creatable && (
+        <Button variant="contained" color="primary" href={`/${viewType}/create`}>
+          新規作成
+        </Button>
+      )}
     </Grid2>
   );
 };

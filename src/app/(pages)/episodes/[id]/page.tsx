@@ -7,7 +7,7 @@ import { WideCard } from "@/app/components/WideCard";
 import { getValidSession } from "@/features/auth/actions";
 import { CreateComment, getComments } from "@/features/comments/actions";
 import { getEpisode } from "@/features/episodes/actions";
-import { isOwner } from "@/lib/permission";
+import { hasPermission, isOwner } from "@/lib/permission";
 
 const buttonStyles: SxProps<Theme> = {
   width: "80%",
@@ -39,17 +39,18 @@ type Props = {
   };
 };
 const EpisodeShowPage = async (props: Props) => {
-  const session = await getValidSession();
   const { params } = props;
   const { id } = params;
   const episode = await getEpisode(id);
   const comments = await getComments(id);
   if (!episode || !comments) notFound();
-
+  const session = await getValidSession();
+  const editable =
+    hasPermission(session.user.appUserRole, "episode:update") && isOwner(session.user.appUserId, episode.appUserId);
   return (
     <>
       <Box m={4}>
-        {isOwner(session.user.appUserId, episode.appUserId) ? (
+        {editable ? (
           <Link href={`/episodes/${episode.id}/edit`} passHref style={linkStyle}>
             <WideCard key={episode.id} {...episode} />
           </Link>
